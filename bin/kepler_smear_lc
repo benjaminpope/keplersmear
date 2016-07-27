@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
 	out_dir = 'kepler_smear/'
 	cbvdir = '/kepler/kepler/FITS/'
-	gap_file = '/users/popeb/K2LC/ben/kepler_bad_cads.csv'
+	gap_file = 'kepler_bad_cads.csv'
 
 	if args.do_all:
 		quarters = range(18)
