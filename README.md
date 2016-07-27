@@ -7,6 +7,8 @@ Python package for generating light curves from Kepler and K2 collateral data.
 
 Using smear data, you can recover photometry of bright stars (Kp <~ 8) that were saturated or otherwise not conventionally observed by Kepler/K2. 
 
+This is an evolving body of code with complicated dependencies. We are endeavouring to simplify this and produce a more straightforward standalone package. 
+
 ## Installation
 
     git clone https://github.com/benjaminpope/keplersmear/
@@ -16,7 +18,7 @@ Using smear data, you can recover photometry of bright stars (Kp <~ 8) that were
 
 ## Requires
 
- - NumPy, SciPy, astropy, George, SuzPyUtils, fitsio, PyKE
+ - NumPy, SciPy, astropy, jplephem, de423, George, SuzPyUtils, fitsio, PyKE
 
 ## Detrending requires
 
