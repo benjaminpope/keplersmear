@@ -5,6 +5,8 @@ from time import time as clock
 
 from argparse import ArgumentParser
 
+from smear_tools import *
+
 from matplotlib import rcParams
 rcParams.update({'figure.autolayout': True})
 
