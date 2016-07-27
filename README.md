@@ -13,3 +13,39 @@ Using smear data, you can recover photometry of bright stars (Kp <~ 8) that were
     cd keplersmear
     python setup.py install --user
 
+
+## Requires
+
+ - NumPy, SciPy, astropy, George, SuzPyUtils, fitsio, PyKE
+
+## Detrending requires
+
+ - k2sc (K2), KeplerSys (nominal Kepler)
+
+Citing
+------
+
+If you use K2SC in your reserach, please cite
+
+	Pope, B. J. S.; White, T. R.; Huber, D.; Murphy, S. J.; Bedding, T. R.; Caldwell, D. A.; Sarai, A.; Aigrain, S.; Barclay, T. (MNRAS, 2016), arXiv:1510.00008
+
+or use this ready-made BibTeX entry
+
+	@ARTICLE{2016MNRAS.455L..36P,
+	   author = {{Pope}, B.~J.~S. and {White}, T.~R. and {Huber}, D. and {Murphy}, S.~J. and 
+		{Bedding}, T.~R. and {Caldwell}, D.~A. and {Sarai}, A. and {Aigrain}, S. and 
+		{Barclay}, T.},
+	    title = "{Photometry of very bright stars with Kepler and K2 smear data}",
+	  journal = {\mnras},
+	archivePrefix = "arXiv",
+	   eprint = {1510.00008},
+	 primaryClass = "astro-ph.IM",
+	 keywords = {asteroseismology, techniques: photometric, stars: individual: HR 8500, 70 Aqr, HD 178875, stars: variables: general},
+	     year = 2016,
+	    month = jan,
+	   volume = 455,
+	    pages = {L36-L40},
+	      doi = {10.1093/mnrasl/slv143},
+	   adsurl = {http://adsabs.harvard.edu/abs/2016MNRAS.455L..36P},
+	  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+	}
