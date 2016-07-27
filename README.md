@@ -15,7 +15,6 @@ This is an evolving body of code with complicated dependencies. We are endeavour
     cd keplersmear
     python setup.py install --user
 
-
 ## Requires
 
  - NumPy, SciPy, astropy, jplephem, de423, George, SuzPyUtils, fitsio, PyKE
