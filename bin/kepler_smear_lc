@@ -4,8 +4,6 @@ import matplotlib.pyplot as plt
 from time import time as clock
 
 from argparse import ArgumentParser
-from keplersmear.smear_tools import *
-from smearcorrection import *
 
 from matplotlib import rcParams
 rcParams.update({'figure.autolayout': True})

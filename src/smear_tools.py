@@ -36,9 +36,9 @@ import re
 import george
 from george import kernels
 
-from smear_tools import *
 from my_kepffi import MASTRADec, sex2dec
-from smearcorrection import *
+# from smearcorrection import *
+from kepsys import cbv
 
 
 def centroid(thisflux,thispos):
