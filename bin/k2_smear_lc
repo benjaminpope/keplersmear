@@ -60,7 +60,7 @@ if __name__ == '__main__':
 		epic = str(epic)
 		# try:
 		lc = do_target_k2(name,campaign,cat_file=cat_file,out_dir=out_dir,
-			smear_type=smear_type,do_plot=do_plot,gap_file=gap_file,sig_clip=sig_clip)
+			smear_type=smear_type,do_plot=do_plot,sig_clip=sig_clip)
 
 		lc.write('%s%s%s_smear%s.fits' % (out_dir,campaign,epic,smear_name(smear_type)),
 			overwrite=True)
