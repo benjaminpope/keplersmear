@@ -936,9 +936,6 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
     print 'RA %f, Dec %f' % (ra, dec)
 
     # get star location 
-    season = np.mod(quarter+2,4)
-
-    print '\nQuerying MAST for star position, season %d' % season
 
     ra, dec, channel, mod, out, col, row = get_pixel_csv(epic,csv_file=cat_file)
     print 'RA %f, Dec %f' % (ra, dec)
