@@ -1083,26 +1083,6 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
                 'STARPOS':starposes,
                 })
 
-    # censor bad cadences
-    for bit in [20,21]:
-        bad = (quality & (2**bit)) == (2**bit)
-
-        for key in lc.keys():
-            if 'FLUX' in key:
-                lc[key][bad] = np.nan            
-
-    censoredlc = censor_bad_cads(lc,quarter,gap_file=gap_file)
-
-    if do_plot:
-        plt.clf()
-        plt.plot(lc['BJD'],lc['FLUX'],'.r')
-        plt.plot(censoredlc['BJD'],censoredlc['FLUX'],'.k')
-        plt.xlabel('BJD')
-        plt.ylabel('FLUX')
-        plt.title('')
-        plt.savefig('%s%s_lc_bads.png' % (out_dir,name))
-        print 'Saved corrected light curve to %s%s_lc_bads.png' % (out_dir,name)
-
     return lc 
 
 ###----------------------------------------------
