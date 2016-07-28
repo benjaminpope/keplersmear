@@ -969,9 +969,9 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
         plt.axvline(col,color='r')
         plt.xlabel('pix')
         plt.ylabel('Flux (counts)')
-        plt.title('Smear Profile, mod.out %d.%d, C%s' % (mod,out,campaign))
-        plt.savefig('%sprofile_%d%d_c%s.png' % (out_dir,mod,out,campaign))
-        print 'Saved smear profile to %sprofile_%d%d_c%s.png' % (out_dir,mod,out,campaign)
+        plt.title('Smear Profile, mod.out %d.%d, %s' % (mod,out,campaign))
+        plt.savefig('%sprofile_%d%d_%s.png' % (out_dir,mod,out,campaign))
+        print 'Saved smear profile to %sprofile_%d%d_%s.png' % (out_dir,mod,out,campaign)
 
     # find the star 
     print '\nFitting star centroids'
@@ -997,9 +997,9 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
         plt.plot(bjd-t0,background)
         plt.xlabel('BJD - %f' % t0)
         plt.ylabel('Flux (counts/pix)')
-        plt.title('Background flux, mod.out %d.%d, C%s' % (mod,out,campaign))
-        plt.savefig('%sbackground_%d%d_c%s.png' % (out_dir,mod,out,campaign))
-        print 'Saved background to %sbackground_%d%d_c%s.png' % (out_dir,mod,out,campaign)
+        plt.title('Background flux, mod.out %d.%d, %s' % (mod,out,campaign))
+        plt.savefig('%sbackground_%d%d_%s.png' % (out_dir,mod,out,campaign))
+        print 'Saved background to %sbackground_%d%d_%s.png' % (out_dir,mod,out,campaign)
 
     # now extract a lightcurve for several different apertures
     print '\nExtracting aperture photometry'

@@ -58,10 +58,9 @@ if __name__ == '__main__':
 		lc = do_target_k2(name,campaign,cat_file=cat_file,out_dir=out_dir,
 			smear_type=smear_type,do_plot=do_plot)
 
-		lc.write('%s%s%s_smear%s.fits' % (out_dir,campaign,epic,smear_name(smear_type)),
-			overwrite=True)
-		lc.write('%s%s%s_smear%s.csv' % (out_dir,campaign,epic,smear_name(smear_type)),
-			overwrite=True)
+		lc.write('%s%s%s_smear%s.fits' % (out_dir,campaign,epic,smear_name(smear_type)))
+		lc.write('%s%s%s_smear%s.csv' % (out_dir,campaign,epic,smear_name(smear_type)))
+		
 		print '\nSaved to %s%s%s_smear%s.csv' % (out_dir,campaign,epic,smear_name(smear_type))
 		print '\nSaved to %s%s%s_smear%s.fits too!' % (out_dir,campaign,epic,smear_name(smear_type))
 		# except:
