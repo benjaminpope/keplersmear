@@ -68,7 +68,7 @@ if __name__ == '__main__':
 
 			print '\nLoading smear data'
 			
-			fname = get_smear_file(campaign,mod,out)
+			fname = get_smear_file_k2(campaign,mod,out)
 
 			smear = load_smear(fname)
 			print 'Smear data loaded'

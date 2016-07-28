@@ -423,6 +423,9 @@ def detrend_smear(lc,epic=None,flux_type='SAP_FLUX',flare_sigma=5,flare_erosion=
 
     return lc2
 
+###----------------------------------------------
+###----------------------------------------------
+
 def get_pixel_ben(ffi_name,ra,dec):
     '''Find which pixel a given star lands on at a given FFI'''
 
@@ -434,11 +437,17 @@ def get_pixel_ben(ffi_name,ra,dec):
     
     return (x,y)
 
+###----------------------------------------------
+###----------------------------------------------
+
 def get_mod_out(channel):
     tab = Table.read('mod_out.csv')
     index = np.where(tab['Channel']==channel)
     mod, out = tab['Mod'][index], tab['Out'][index]
     return int(mod), int(out)
+
+###----------------------------------------------
+###----------------------------------------------
 
 def get_pixel_csv(epic,csv_file='C05_smear.csv'):
     '''Find which pixel a given star lands on at a given FFI'''
@@ -452,6 +461,9 @@ def get_pixel_csv(epic,csv_file='C05_smear.csv'):
 
     return ra, dec, channel, mod, out, col, row 
 
+###----------------------------------------------
+###----------------------------------------------
+
 def get_pixel_mast(ra,dec,season):
     '''Use MAST to get a pixel position'''
 
@@ -460,11 +472,25 @@ def get_pixel_mast(ra,dec,season):
 
     return int(row),int(column),int(channel),int(module),int(output)
 
+###----------------------------------------------
+###----------------------------------------------
+
 def get_smear_file(quarter,mod,out,ddir='/kepler/kepler/smear/'):
     cads = get_num(quarter)
-    fname = '%skplr%02d%1d-%d_coll.fits.gz' % (ddir,mod,out,cads)
+    fname = '%skplr%02d%1d_coll.fits.gz' % (ddir,mod,out,cads)
 
     return fname 
+
+###----------------------------------------------
+###----------------------------------------------
+
+def get_smear_file_k2(campaign,mod,out,ddir='/kepler/kepler/smear/'):
+    fname = '%sktwo%02d%1d-c%02d_coll.fits' % (ddir,mod,out,campaign)
+
+    return fname 
+
+###----------------------------------------------
+###----------------------------------------------
 
 def load_smear(smear_file):
     '''Return a dictionary containing the smear data and times'''
@@ -502,7 +528,6 @@ def load_output(output_file):
                 'GP_FCOR': flux,
                 'SAP_FLUX':flux
                 })
-
 
     return lc
 
@@ -728,7 +753,7 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
         plt.clf()
         plt.plot(bjd-t0,starposes-np.nanmedian(starposes),'.k')
         plt.xlabel('BJD - %f' % t0)
-        plt.ylabel(r'Delta pix')
+        plt.ylabel(r'$\Delta$ pix')
         plt.title('%s position, Q%d' % (name,quarter))
         plt.savefig('%sstarpos_%s_q%d.png' % (out_dir,name,quarter))
         print 'Saved star positions to %sstarpos_%s_q%d.png' % (out_dir,name,quarter)
@@ -791,6 +816,7 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
         nearby = my_MASTRADec(ra,dec,tel='kepler',quarter=quarter)
 
         nearby_tab = Table.read(nearby)
+        os.remove(nearby)
 
         quality = nearby_tab['SAP_QUALITY']
     except:
@@ -798,6 +824,7 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
         nearby = my_MASTRADec(ra,dec,tel='kepler',quarter=quarter,darcsec=50000)
 
         nearby_tab = Table.read(nearby)
+        os.remove(nearby)
 
         quality = nearby_tab['SAP_QUALITY']
 
@@ -894,6 +921,197 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
     # now save the lightcurve
     lc['FLUX_CORR_4'] = flux_cbv4
     lc['FLUX_CORR_8'] = flux_cbv8
+
+    return lc 
+
+###----------------------------------------------
+###----------------------------------------------
+
+def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
+    smear_type=None,do_plot=False):
+    
+    tab = Table.read(cat_file)
+    smear_name = lambda s: '' if s is None else str(s)
+    index = np.where(tab['Name']==name)
+    rah, dech = tab['RA'][index][:].data[0], tab['Dec'][index][:].data[0]
+    ra, dec = sex2dec(rah,dech)
+    print '\nExtracting smear light curve for %s , Campaign %s' % (name,campaign) 
+    print 'RA %f, Dec %f' % (ra, dec)
+
+    # get star location 
+    season = np.mod(quarter+2,4)
+
+    print '\nQuerying MAST for star position, season %d' % season
+
+    ra, dec, channel, mod, out, col, row = get_pixel_csv(epic,csv_file=cat_file)
+            print 'RA %f, Dec %f' % (ra, dec)
+    
+    print 'Found star at mod.out %d.%d, channel %d, row %d, column %d' % \
+        (mod,out,channel,row,col)
+
+    col -= 12
+
+    # load the smear data 
+
+    print '\nLoading smear data'
+    
+    fname = get_smear_file_k2(campaign,mod,out)
+
+    smear = load_smear(fname)
+    print 'Smear data loaded'
+
+    ## now do MJD - bjd correction
+    mjd = np.copy(smear['MJD'][np.isfinite(smear['MJD'])])
+    bjd = np.copy(smear['MJD'])
+    bjd[np.isfinite(smear['MJD'])] = mjd2bjd(mjd,ra,dec)
+    t0 = bjd[np.isfinite(bjd)].min()
+
+    print 'Corrected MJD to bjd'
+
+    if do_plot:
+        plt.clf()
+        plt.plot(smear['smear_flux'].mean(axis=0),'b')
+        plt.plot(smear['vsmear_flux'].mean(axis=0),'g')
+        plt.axvline(col,color='r')
+        plt.xlabel('pix')
+        plt.ylabel('Flux (counts)')
+        plt.title('Smear Profile, mod.out %d.%d, C%s' % (mod,out,campaign))
+        plt.savefig('%sprofile_%d%d_c%s.png' % (out_dir,mod,out,campaign))
+        print 'Saved smear profile to %sprofile_%d%d_c%s.png' % (out_dir,mod,out,campaign)
+
+    # find the star 
+    print '\nFitting star centroids'
+
+    starposes = get_centroid_series(smear,col-5,col+5,col=smear_type)
+
+    if do_plot:
+        plt.clf()
+        plt.plot(bjd-t0,starposes-np.nanmedian(starposes),'.k')
+        plt.xlabel('BJD - %f' % t0)
+        plt.ylabel(r'$\Delta$ pix')
+        plt.title('%s position' % (name))
+        plt.savefig('%s_%sstarpos.png' % (out_dir,name))
+        print 'Saved star positions to %s_%sstarpos.png' % (out_dir,name)
+
+    # get background flux 
+    print '\nExtracting background flux'
+
+    background = get_background(smear,col=smear_type)
+
+    if do_plot:
+        plt.clf()
+        plt.plot(bjd-t0,background)
+        plt.xlabel('BJD - %f' % t0)
+        plt.ylabel('Flux (counts/pix)')
+        plt.title('Background flux, mod.out %d.%d, C%s' % (mod,out,campaign))
+        plt.savefig('%sbackground_%d%d_c%s.png' % (out_dir,mod,out,campaign))
+        print 'Saved background to %sbackground_%d%d_c%s.png' % (out_dir,mod,out,campaign)
+
+    # now extract a lightcurve for several different apertures
+    print '\nExtracting aperture photometry'
+
+    widths = [1.5,2,3,4,5]
+
+    flux = np.zeros((5,bjd.shape[0]))
+    sigs = np.zeros(5)
+
+    for j in range(5):
+        flux[j,:] = extract_lc(smear,starposes,background,
+            widths[j],col=smear_type)
+        mm, ss = medsig(flux[j,:])
+        sigs[j] = ss/mm
+
+    best_aperture = np.argmin(sigs)
+
+    print 'Best aperture:',best_aperture
+
+    if do_plot:
+        plt.clf()
+        for j in range(5):
+            plt.plot(bjd-t0,flux[j,:],'.')
+        plt.xlabel('BJD -%f' % t0)
+        plt.ylabel('Flux (counts)')
+        plt.title('%s Light curves' % (name))
+        plt.savefig('%s%s_lcs.png' % (out_dir,name))
+        print 'Saved light curves to %s%s_lcs.png' % (out_dir,name)
+
+        plt.clf()
+        plt.plot(bjd-t0,flux[best_aperture,:]/
+            (medsig(flux[best_aperture,:])[0]),'.k')
+        plt.xlabel('BJD -%f' % t0)
+        plt.ylabel('Relative Flux')
+        plt.title('%s Optimal Light curve' % (name))
+        plt.savefig('%s%s_lc_best.png' % (out_dir,name))
+        print 'Saved best light curve to %s%s_lc_best.png' % (out_dir,name)
+
+
+            # query mast for the nearest object
+
+    try:
+        nearby = my_MASTRADec(ra,dec)
+
+        nearby_tab = Table.read(nearby)
+        os.remove(nearby)
+
+        x, y, quality = nearby_tab['POS_CORR1'], nearby_tab['POS_CORR2'],\
+            nearby_tab['SAP_QUALITY']
+
+        print '\nSet metadata equal to nearby star'
+    except:
+        print 'Failed to download a nearby light curve'
+        try:
+            print 'Expanding search!'
+            nearby = my_MASTRADec(ra,dec,darcsec=50000)
+
+            nearby_tab = Table.read(nearby)
+            os.remove(nearby)
+
+            x, y, quality = nearby_tab['POS_CORR1'], nearby_tab['POS_CORR2'],\
+                nearby_tab['SAP_QUALITY']
+            print '\nSet metadata equal to nearby star'
+        except:
+            print 'Failed totally to find a nearby light curve'
+            quality = ~np.isfinite(flux[0,:])
+            x, y = np.zeros_like(bjd), np.zeros_like(bjd)
+
+
+    lc = Table({'BJD':bjd,
+                'TIME':bjd,
+                'MJD':smear['MJD'],
+                'CADENCENO': smear['cads'],
+                'FLUX1': flux[0,:],
+                'FLUX2': flux[1,:],
+                'FLUX3': flux[2,:],
+                'FLUX4': flux[3,:],
+                'FLUX5': flux[4,:],
+                'SAP_FLUX' : flux[best_aperture,:],
+                'SAP_FLUX_ERR' : flux[np.argmin(sigs),:],
+                'SAP_QUALITY':quality,
+                'POS_CORR1': x,
+                'POS_CORR2': y,
+                'BACKGROUND':background,
+                'STARPOS':starposes,
+                })
+
+    # censor bad cadences
+    for bit in [20,21]:
+        bad = (quality & (2**bit)) == (2**bit)
+
+        for key in lc.keys():
+            if 'FLUX' in key:
+                lc[key][bad] = np.nan            
+
+    censoredlc = censor_bad_cads(lc,quarter,gap_file=gap_file)
+
+    if do_plot:
+        plt.clf()
+        plt.plot(lc['BJD'],lc['FLUX'],'.r')
+        plt.plot(censoredlc['BJD'],censoredlc['FLUX'],'.k')
+        plt.xlabel('BJD')
+        plt.ylabel('FLUX')
+        plt.title('')
+        plt.savefig('%s%s_lc_bads.png' % (out_dir,name))
+        print 'Saved corrected light curve to %s%s_lc_bads.png' % (out_dir,name)
 
     return lc 
 
