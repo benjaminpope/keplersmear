@@ -42,7 +42,8 @@ if __name__ == '__main__':
 	cat_file = args.cat_file
 	sig_clip = args.sig_clip
 
-	out_dir = '%s_smear/' % campaign
+	name = str(epic)
+	out_dir = 'C%02d_smear/' % campaign
 
 	if do_all:
 		tab = Table.read(cat_file)
@@ -57,7 +58,7 @@ if __name__ == '__main__':
 	for epic in epics:
 		epic = str(epic)
 		# try:
-		lc = do_target(name,quarter,cat_file=cat_file,out_dir=out_dir,
+		lc = do_target_k2(name,campaign,cat_file=cat_file,out_dir=out_dir,
 				cbvdir=cbvdir,smear_type=smear_type,do_plot=do_plot,
 				gap_file=gap_file,sig_clip=sig_clip)
 		lc.write('%s%s%s_smear%s.fits' % (out_dir,campaign,epic,smear_name(smear_type)),
