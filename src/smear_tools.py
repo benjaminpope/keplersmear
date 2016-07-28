@@ -484,8 +484,8 @@ def get_smear_file(quarter,mod,out,ddir='/kepler/kepler/smear/'):
 ###----------------------------------------------
 ###----------------------------------------------
 
-def get_smear_file_k2(campaign,mod,out,ddir='/kepler/kepler/smear/'):
-    fname = '%sktwo%02d%1d-c%02d_coll.fits' % (ddir,mod,out,campaign)
+def get_smear_file_k2(campaign,mod,out,ddir='/kepler/kepler2/K2/'):
+    fname = '%sC%02d/collateral/ktwo%02d%1d-c%02d_coll.fits' % (ddir,int(campaign),mod,out,int(campaign))
 
     return fname 
 
@@ -949,7 +949,7 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
 
     print '\nLoading smear data'
     
-    fname = get_smear_file_k2(campaign,mod,out)
+    fname = get_smear_file_k2(int(campaign[-1]),mod,out)
 
     smear = load_smear(fname)
     print 'Smear data loaded'
