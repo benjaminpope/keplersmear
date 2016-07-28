@@ -28,6 +28,8 @@ if __name__ == '__main__':
 					help = 'produce plots')
 	ap.add_argument('--do-all', action = 'store_true', default = False, \
 					help = 'produce plots')
+	ap.add_argument('--sig-clip',action='store_true', default = True, \
+					help='sigma clip before correcting with CBVs')
 
 
 	args = ap.parse_args()
@@ -38,6 +40,7 @@ if __name__ == '__main__':
 	smear_type = args.smear_type
 	do_all = args.do_all
 	cat_file = args.cat_file
+	sig_clip = args.sig_clip
 
 	out_dir = '%s_smear/' % campaign
 
