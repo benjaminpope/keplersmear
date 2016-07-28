@@ -984,8 +984,8 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
         plt.xlabel('BJD - %f' % t0)
         plt.ylabel(r'$\Delta$ pix')
         plt.title('%s position' % (name))
-        plt.savefig('%s_%sstarpos.png' % (out_dir,name))
-        print 'Saved star positions to %s_%sstarpos.png' % (out_dir,name)
+        plt.savefig('%s%s_starpos.png' % (out_dir,name))
+        print 'Saved star positions to %s%s_starpos.png' % (out_dir,name)
 
     # get background flux 
     print '\nExtracting background flux'
