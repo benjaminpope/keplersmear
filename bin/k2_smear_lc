@@ -28,9 +28,6 @@ if __name__ == '__main__':
 					help = 'produce plots')
 	ap.add_argument('--do-all', action = 'store_true', default = False, \
 					help = 'produce plots')
-	ap.add_argument('--sig-clip',action='store_true', default = True, \
-					help='sigma clip before correcting with CBVs')
-
 
 	args = ap.parse_args()
 
@@ -40,7 +37,6 @@ if __name__ == '__main__':
 	smear_type = args.smear_type
 	do_all = args.do_all
 	cat_file = args.cat_file
-	sig_clip = args.sig_clip
 
 	name = str(epic)
 	out_dir = '%s_smear/' % campaign
@@ -60,7 +56,7 @@ if __name__ == '__main__':
 		epic = str(epic)
 		# try:
 		lc = do_target_k2(name,campaign,cat_file=cat_file,out_dir=out_dir,
-			smear_type=smear_type,do_plot=do_plot,sig_clip=sig_clip)
+			smear_type=smear_type,do_plot=do_plot)
 
 		lc.write('%s%s%s_smear%s.fits' % (out_dir,campaign,epic,smear_name(smear_type)),
 			overwrite=True)
