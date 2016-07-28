@@ -813,18 +813,12 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
 
     # get quality flags
     try:
-        nearby = my_MASTRADec(ra,dec,tel='kepler',quarter=quarter)
-
-        nearby_tab = Table.read(nearby)
-        os.remove(nearby)
+        nearby_tab = my_MASTRADec(ra,dec,tel='kepler',quarter=quarter)
 
         quality = nearby_tab['SAP_QUALITY']
     except:
         print 'Expanding search!'
         nearby = my_MASTRADec(ra,dec,tel='kepler',quarter=quarter,darcsec=50000)
-
-        nearby_tab = Table.read(nearby)
-        os.remove(nearby)
 
         quality = nearby_tab['SAP_QUALITY']
 
@@ -1050,9 +1044,6 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
     try:
         nearby = my_MASTRADec(ra,dec)
 
-        nearby_tab = Table.read(nearby)
-        os.remove(nearby)
-
         x, y, quality = nearby_tab['POS_CORR1'], nearby_tab['POS_CORR2'],\
             nearby_tab['SAP_QUALITY']
 
@@ -1063,8 +1054,7 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
             print 'Expanding search!'
             nearby = my_MASTRADec(ra,dec,darcsec=50000)
 
-            nearby_tab = Table.read(nearby)
-            os.remove(nearby)
+
 
             x, y, quality = nearby_tab['POS_CORR1'], nearby_tab['POS_CORR2'],\
                 nearby_tab['SAP_QUALITY']

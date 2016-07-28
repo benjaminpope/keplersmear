@@ -1,4 +1,5 @@
 import pylab, numpy, pyfits
+import os
 from pylab import *
 from matplotlib import *
 from numpy import *
@@ -144,4 +145,7 @@ def my_MASTRADec(ra,dec,darcsec=1200.,tel='k2',quarter=None):
 
     fname = wget.download(url)
 
-    return fname
+    tab = Table.read(fname)
+    os.remove(fname)
+
+    return tab
