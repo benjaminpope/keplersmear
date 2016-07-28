@@ -43,7 +43,7 @@ if __name__ == '__main__':
 	sig_clip = args.sig_clip
 
 	name = str(epic)
-	out_dir = 'C%02d_smear/' % campaign
+	out_dir = '%s_smear/' % campaign
 
 	if do_all:
 		tab = Table.read(cat_file)
