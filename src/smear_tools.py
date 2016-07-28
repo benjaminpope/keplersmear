@@ -926,7 +926,7 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
     
     tab = Table.read(cat_file)
     smear_name = lambda s: '' if s is None else str(s)
-    index = np.where(tab['Epic']==name)
+    index = np.where(tab['Epic']==int(name))
     rah, dech = tab['RA'][index][:].data[0], tab['Dec'][index][:].data[0]
     ra, dec = sex2dec(rah,dech)
     print '\nExtracting smear light curve for %s , Campaign %s' % (name,campaign) 
