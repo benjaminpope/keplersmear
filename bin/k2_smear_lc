@@ -45,6 +45,7 @@ if __name__ == '__main__':
 	name = str(epic)
 	out_dir = '%s_smear/' % campaign
 
+
 	if do_all:
 		tab = Table.read(cat_file)
 		epics = list(tab['EPIC'][:])
@@ -59,11 +60,12 @@ if __name__ == '__main__':
 		epic = str(epic)
 		# try:
 		lc = do_target_k2(name,campaign,cat_file=cat_file,out_dir=out_dir,
-				cbvdir=cbvdir,smear_type=smear_type,do_plot=do_plot,
-				gap_file=gap_file,sig_clip=sig_clip)
+			smear_type=smear_type,do_plot=do_plot,gap_file=gap_file,sig_clip=sig_clip)
+
 		lc.write('%s%s%s_smear%s.fits' % (out_dir,campaign,epic,smear_name(smear_type)),
 			overwrite=True)
-
+		lc.write('%s%s%s_smear%s.csv' % (out_dir,campaign,epic,smear_name(smear_type)),
+			overwrite=True)
 		print '\nSaved to %s%s%s_smear%s.csv' % (out_dir,campaign,epic,smear_name(smear_type))
 		print '\nSaved to %s%s%s_smear%s.fits too!' % (out_dir,campaign,epic,smear_name(smear_type))
 		# except:
