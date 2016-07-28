@@ -937,7 +937,7 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
 
     # get star location 
 
-    ra, dec, channel, mod, out, col, row = get_pixel_csv(epic,csv_file=cat_file)
+    ra, dec, channel, mod, out, col, row = get_pixel_csv(name,csv_file=cat_file)
     print 'RA %f, Dec %f' % (ra, dec)
     
     print 'Found star at mod.out %d.%d, channel %d, row %d, column %d' % \
