@@ -818,7 +818,7 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
         quality = nearby_tab['SAP_QUALITY']
     except:
         print 'Expanding search!'
-        nearby = my_MASTRADec(ra,dec,tel='kepler',quarter=quarter,darcsec=50000)
+        nearby_tab = my_MASTRADec(ra,dec,tel='kepler',quarter=quarter,darcsec=50000)
 
         quality = nearby_tab['SAP_QUALITY']
 
@@ -1042,7 +1042,7 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
             # query mast for the nearest object
 
     try:
-        nearby = my_MASTRADec(ra,dec)
+        nearby_tab = my_MASTRADec(ra,dec)
 
         x, y, quality = nearby_tab['POS_CORR1'], nearby_tab['POS_CORR2'],\
             nearby_tab['SAP_QUALITY']
@@ -1052,10 +1052,7 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
         print 'Failed to download a nearby light curve'
         try:
             print 'Expanding search!'
-            nearby = my_MASTRADec(ra,dec,darcsec=50000)
-
-
-
+            nearby_tab = my_MASTRADec(ra,dec,darcsec=50000)
             x, y, quality = nearby_tab['POS_CORR1'], nearby_tab['POS_CORR2'],\
                 nearby_tab['SAP_QUALITY']
             print '\nSet metadata equal to nearby star'
