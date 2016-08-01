@@ -10,6 +10,7 @@ from PIL import Image
 
 from astroquery.simbad import Simbad 
 from astroquery.skyview import SkyView
+from astropy.table import Table
 
 skygroup = ''; channel = ''; module = ''; output = ''; column = ''; row = ''
 
@@ -97,12 +98,12 @@ def my_MASTRADec(ra,dec,darcsec=1200.,tel='k2',quarter=None):
 
 # WCS data
 
-    cd1_1 = 0.000702794927969
-    cd1_2 = -0.000853190160515
-    cd2_1 = -0.000853190160515
-    cd2_2 = -0.000702794927969
-    cd = array([[cd1_1,cd1_2],[cd2_1,cd2_2]])
-    cd = linalg.inv(cd)
+    # cd1_1 = 0.000702794927969
+    # cd1_2 = -0.000853190160515
+    # cd2_1 = -0.000853190160515
+    # cd2_2 = -0.000702794927969
+    # cd = array([[cd1_1,cd1_2],[cd2_1,cd2_2]])
+    # cd = linalg.inv(cd)
 
 # coordinate limits
 

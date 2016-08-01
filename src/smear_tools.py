@@ -933,7 +933,6 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
     except:
         ra, dec = rah, dech
     print '\nExtracting smear light curve for %s , Campaign %s' % (name,campaign) 
-    print 'RA %f, Dec %f' % (ra, dec)
 
     # get star location 
 
