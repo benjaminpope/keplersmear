@@ -147,6 +147,9 @@ def my_MASTRADec(ra,dec,darcsec=1200.,tel='k2',quarter=None):
     fname = wget.download(url)
 
     tab = Table.read(fname)
-    os.remove(fname)
+    try:
+        os.remove(fname)
+    except:
+        pass
 
     return tab
