@@ -477,7 +477,7 @@ def get_pixel_mast(ra,dec,season):
 
 def get_smear_file(quarter,mod,out,ddir='/kepler/kepler/smear/'):
     cads = get_num(quarter)
-    fname = '%skplr%02d%1d_coll.fits.gz' % (ddir,mod,out,cads)
+    fname = '%skplr%02d%1d-%d_coll.fits.gz' % (ddir,mod,out,cads)
 
     return fname 
 
