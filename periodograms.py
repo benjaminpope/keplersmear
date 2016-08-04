@@ -19,7 +19,7 @@ if __name__ == '__main__':
 	args = ap.parse_args()
 	ddir = args.ddir
 
-	stars = {re.search('%s(.+?)_smear_full.csv' % ddir,star).group(1) for star in glob.glob('%s*_smear_*.csv' % ddir)}
+	stars = {re.search('%s(.+?)_smear_full.csv' % ddir,star).group(1) for star in glob.glob('%s*_smear_full.csv' % ddir)}
 	first = clock()
 
 	lspmin, lspmax = 0.5/24.,100
@@ -27,6 +27,7 @@ if __name__ == '__main__':
 	freqs = np.linspace(1./lspmax, 1./lspmin, 24000)*2.*np.pi
 
 	for star in stars:
+		print 'Doing star %s' % star.replace ("_", " ")
 		fname = ddir+star
 		starttime = clock()
 
