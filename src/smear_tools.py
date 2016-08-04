@@ -271,8 +271,8 @@ def my_lombscargle(times,fluxes,freqs,norm=True):
 
     lsp = lombscargle(thesetimes,thesefluxes,freqs)*4./ndata/medflux
 
-    if norm == True:
-        lsp /= medflux
+    # if norm == True:
+    #     lsp /= medflux
 
     return lsp
 
