@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt 
 import re
 import glob
-from time import time as clock()
+from time import time as clock
 from k2_epd_george import print_time
 from k2_bls_search import *
 from keplersmear.smear_tools import *
