@@ -11,10 +11,10 @@ import matplotlib as mpl
 mpl.style.use('seaborn-colorblind')
 
 if __name__ == '__main__':
-    ap = ArgumentParser(description='Process smear light curves for periodograms')
-    ap.add_argument('ddir', type=str,  help='Input directory name.')
-    args = ap.parse_args()
-    ddir = args.ddir
+	ap = ArgumentParser(description='Process smear light curves for periodograms')
+	ap.add_argument('ddir', type=str,  help='Input directory name.')
+	args = ap.parse_args()
+	ddir = args.ddir
 
 	args = ap.parse_args()
 	ddir = args.ddir
@@ -69,16 +69,16 @@ if __name__ == '__main__':
 		## now do a BLS search
 
 		lc = Table({'SAP_FLUX':corr_flux,
-		            'SAP_QUALITY':~np.isfinite(corr_flux),
-		            'GP_FCOR':corr_flux,
-		           'BJD':time,
-		           'GP_TIME':filt})
+					'SAP_QUALITY':~np.isfinite(corr_flux),
+					'GP_FCOR':corr_flux,
+				   'BJD':time,
+				   'GP_TIME':filt})
 
 		period_range = (0.7,500)
 
 		bls_results, bls_epoch, bls_dur = bls_fold(20000000,lc, whiten='gp', verbose=True,
 			savefigs=False,period_range=period_range,campaign='Nominal', 
-		         threshold = 100,figdir ='.')
+				 threshold = 100,figdir ='.')
 
 		folded = fold(time,bls_results.bper)
 		plt.clf()
