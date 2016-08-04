@@ -1,7 +1,7 @@
 import numpy as np 
 import matplotlib.pyplot as plt 
 import re
-import glob
+# import glob
 from time import time as clock
 from k2_epd_george import print_time
 from k2_bls_search import *
@@ -19,7 +19,7 @@ if __name__ == '__main__':
 	args = ap.parse_args()
 	ddir = args.ddir
 
-	stars = {re.search('%s(.+?)_smear_full.csv' % ddir,star).group(1) for star in glob.glob('%s*_smear_full.csv' % ddir)}
+	stars = {re.search('%s(.+?)_smear_full.csv' % ddir,star).group(1) for star in glob('%s*_smear_full.csv' % ddir)}
 	first = clock()
 
 	lspmin, lspmax = 0.5/24.,100
