@@ -9,6 +9,8 @@ from keplersmear.smear_tools import *
 
 import matplotlib as mpl 
 mpl.style.use('seaborn-colorblind')
+mpl.rcParams['savefig.dpi']= 200             #72 
+
 
 if __name__ == '__main__':
 	ap = ArgumentParser(description='Process smear light curves for periodograms')
@@ -22,9 +24,9 @@ if __name__ == '__main__':
 	stars = {re.search('%s(.+?)_smear_full.csv' % ddir,star).group(1) for star in glob('%s*_smear_full.csv' % ddir)}
 	first = clock()
 
-	lspmin, lspmax = 0.5/24.,100
+	lspmin, lspmax = 1./24.,100
 
-	freqs = np.linspace(1./lspmax, 1./lspmin, 24000)*2.*np.pi
+	freqs = np.linspace(1./lspmax, 1./lspmin, 48000)*2.*np.pi
 
 	for star in stars:
 		print 'Doing star %s' % star.replace ("_", " ")
@@ -65,30 +67,30 @@ if __name__ == '__main__':
 
 		print_time(clock()-starttime)
 
-		print 'Doing planet search'
+		# print 'Doing planet search'
 
 		## now do a BLS search
 
-		lc = Table({'SAP_FLUX':corr_flux,
-					'SAP_QUALITY':~np.isfinite(corr_flux),
-					'GP_FCOR':corr_flux,
-				   'BJD':time,
-				   'GP_TIME':filt})
+		# lc = Table({'SAP_FLUX':corr_flux,
+		# 			'SAP_QUALITY':~np.isfinite(corr_flux),
+		# 			'GP_FCOR':corr_flux,
+		# 		   'BJD':time,
+		# 		   'GP_TIME':filt})
 
-		period_range = (0.7,500)
+		# period_range = (0.7,500)
 
-		bls_results, bls_epoch, bls_dur = bls_fold(20000000,lc, whiten='gp', verbose=True,
-			savefigs=False,period_range=period_range,campaign='Nominal', 
-				 threshold = 100,figdir ='.')
+		# bls_results, bls_epoch, bls_dur = bls_fold(20000000,lc, whiten='gp', verbose=True,
+		# 	savefigs=False,period_range=period_range,campaign='Nominal', 
+		# 		 threshold = 100,figdir ='.')
 
-		folded = fold(time,bls_results.bper)
-		plt.clf()
-		plt.plot(folded,lc['GP_FCOR'],'.k')
-		plt.xlabel('Phase')
-		plt.ylabel('Flux')
-		plt.title('%s Folded Light Curve' % star.replace ("_", " "),y=1.02)
-		plt.savefig('%s%s_folded.png' % (ddir,star))
-		print 'Saved planet search to %s%s_folded.png' % (ddir,star)
+		# folded = fold(time,bls_results.bper)
+		# plt.clf()
+		# plt.plot(folded,lc['GP_FCOR'],'.k')
+		# plt.xlabel('Phase')
+		# plt.ylabel('Flux')
+		# plt.title('%s Folded Light Curve' % star.replace ("_", " "),y=1.02)
+		# plt.savefig('%s%s_folded.png' % (ddir,star))
+		# print 'Saved planet search to %s%s_folded.png' % (ddir,star)
 
 	print_time(clock()-first)
 
