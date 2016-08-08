@@ -24,7 +24,7 @@ if __name__ == '__main__':
 	stars = {re.search('%s(.+?)_smear_full.csv' % ddir,star).group(1) for star in glob('%s*_smear_full.csv' % ddir)}
 	first = clock()
 
-	f = open('do_periodograms.txt')
+	f = open('do_periodograms.txt','w')
 
 	for star in stars:
 		fname = ddir+star
