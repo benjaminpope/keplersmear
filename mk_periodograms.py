@@ -16,12 +16,9 @@ if __name__ == '__main__':
 	ap = ArgumentParser(description='Process smear light curves for periodograms')
 	'''-----------------------------------
 	Try 
-	mpisubcmb 88 "a few hours" /users/popeb/keplersmear/do_periodograms.txt
+	mpisubcmb "a few hours" 88 /users/popeb/keplersmear/do_periodograms.txt
 	-----------------------------------'''
 	ap.add_argument('ddir', type=str,  help='Input directory name.')
-	args = ap.parse_args()
-	ddir = args.ddir
-
 	args = ap.parse_args()
 	ddir = args.ddir
 
@@ -31,9 +28,8 @@ if __name__ == '__main__':
 	f = open('do_periodograms.txt','w')
 
 	for star in stars:
-		fname = ddir+star
 		starttime = clock()
-		f.write('python periodograms.py %s\n' % fname)
+		f.write('python periodograms.py %s_smear_full.csv %s\n' % star, ddir)
 
 	f.close()
 

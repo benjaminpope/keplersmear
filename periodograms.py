@@ -15,10 +15,11 @@ mpl.rcParams['savefig.dpi']= 200             #72
 if __name__ == '__main__':
 	ap = ArgumentParser(description='Process smear light curves for periodograms')
 	ap.add_argument('star', type=str,  help='Input star name.')
+	ap.add_argument('ddir', type=str,  help='Input star name.')
 
 	args = ap.parse_args()
 	star = args.star
-
+	ddir = args.ddir
 
 	first = clock()
 
@@ -27,11 +28,10 @@ if __name__ == '__main__':
 	freqs = np.linspace(1./lspmax, 1./lspmin, 18000)*2.*np.pi
 
 	print 'Doing star %s' % star.replace ("_", " ")
-	fname = star
 	starttime = clock()
 
 	# read in data
-	data = Table.read('%s_smear_full.csv' % (star))
+	data = Table.read('%s%s_smear_full.csv' % (ddir,star))
 	good = data['QUARTER']!=0 # quarter 0 is no good
 	data = data[good]
 
@@ -59,8 +59,8 @@ if __name__ == '__main__':
 	plt.ylabel('Amplitude (ppm)')
 	plt.title('Periodogram of %s Oscillations' % star.replace ("_", " "),y=1.02)
 
-	plt.savefig('%s_periodogram.png' % (star))
-	print 'Saved periodogram to %s_periodogram.png' % (star)
+	plt.savefig('%s%s_periodogram.png' % (ddir,star))
+	print 'Saved periodogram to %s%s_periodogram.png' % (ddir,star)
 
 	print_time(clock()-starttime)
 
@@ -86,8 +86,8 @@ if __name__ == '__main__':
 	plt.xlabel('Phase')
 	plt.ylabel('Flux')
 	plt.title('%s Folded Light Curve' % star.replace ("_", " "),y=1.02)
-	plt.savefig('%s_folded.png' % (star))
-	print 'Saved planet search to %s_folded.png' % (star)
+	plt.savefig('%s%s_folded.png' % (ddir,star))
+	print 'Saved planet search to %s%s_folded.png' % (ddir,star)
 
 	print_time(clock()-first)
 
