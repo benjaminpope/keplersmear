@@ -16,7 +16,7 @@ if __name__ == '__main__':
 	ap = ArgumentParser(description='Process smear light curves for periodograms')
 	'''-----------------------------------
 	Try 
-	mpisubcmb "a few hours" 88 /users/popeb/keplersmear/do_periodograms.txt
+	mpisubcmb "a few mins" 4x12 /usr/local/shared/bin/multirunquiet /users/popeb/keplersmear/do_periodograms.txt
 	-----------------------------------'''
 	ap.add_argument('ddir', type=str,  help='Input directory name.')
 	args = ap.parse_args()

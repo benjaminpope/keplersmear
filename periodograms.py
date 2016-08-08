@@ -23,7 +23,7 @@ if __name__ == '__main__':
 
 	first = clock()
 
-	lspmin, lspmax = 1./24.,100
+	lspmin, lspmax = 24./24.,100
 
 	freqs = np.linspace(1./lspmax, 1./lspmin, 18000)*2.*np.pi
 
@@ -59,36 +59,36 @@ if __name__ == '__main__':
 	plt.ylabel('Amplitude (ppm)')
 	plt.title('Periodogram of %s Oscillations' % star.replace ("_", " "),y=1.02)
 
-	plt.savefig('%s%s_periodogram.png' % (ddir,star))
-	print 'Saved periodogram to %s%s_periodogram.png' % (ddir,star)
+	plt.savefig('%s%s_periodogram_low.png' % (ddir,star))
+	print 'Saved periodogram to %s%s_periodogram_low.png' % (ddir,star)
 
 	print_time(clock()-starttime)
 
-	print 'Doing planet search'
+	# print 'Doing planet search'
 
-	# now do a BLS search
+	# # now do a BLS search
 
-	lc = Table({'SAP_FLUX':corr_flux,
-				'SAP_QUALITY':~np.isfinite(corr_flux),
-				'GP_FCOR':corr_flux,
-			   'BJD':time,
-			   'GP_TIME':filt})
+	# lc = Table({'SAP_FLUX':corr_flux,
+	# 			'SAP_QUALITY':~np.isfinite(corr_flux),
+	# 			'GP_FCOR':corr_flux,
+	# 		   'BJD':time,
+	# 		   'GP_TIME':filt})
 
-	period_range = (0.7,500)
+	# period_range = (0.7,500)
 
-	bls_results, bls_epoch, bls_dur = bls_fold(20000000,lc, whiten='gp', verbose=True,
-		savefigs=False,period_range=period_range,campaign='Nominal', 
-			 threshold = 100,figdir ='.')
+	# bls_results, bls_epoch, bls_dur = bls_fold(20000000,lc, whiten='gp', verbose=True,
+	# 	savefigs=False,period_range=period_range,campaign='Nominal', 
+	# 		 threshold = 100,figdir ='.')
 
-	folded = fold(time,bls_results.bper)
-	plt.clf()
-	plt.plot(folded,lc['GP_FCOR'],'.k')
-	plt.xlabel('Phase')
-	plt.ylabel('Flux')
-	plt.title('%s Folded Light Curve' % star.replace ("_", " "),y=1.02)
-	plt.savefig('%s%s_folded.png' % (ddir,star))
-	print 'Saved planet search to %s%s_folded.png' % (ddir,star)
+	# folded = fold(time,bls_results.bper)
+	# plt.clf()
+	# plt.plot(folded,lc['GP_FCOR'],'.k')
+	# plt.xlabel('Phase')
+	# plt.ylabel('Flux')
+	# plt.title('%s Folded Light Curve' % star.replace ("_", " "),y=1.02)
+	# plt.savefig('%s%s_folded.png' % (ddir,star))
+	# print 'Saved planet search to %s%s_folded.png' % (ddir,star)
 
-	print_time(clock()-first)
+	# print_time(clock()-first)
 
 	print 'Finished!'
