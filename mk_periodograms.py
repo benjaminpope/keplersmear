@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
 	for star in stars:
 		starttime = clock()
-		f.write('python periodograms.py %s_smear_full.csv %s\n' % star, ddir)
+		f.write('python periodograms.py %s_smear_full.csv %s\n' % (star, ddir))
 
 	f.close()
 
