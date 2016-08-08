@@ -30,7 +30,7 @@ if __name__ == '__main__':
 	for star in stars:
 		starttime = clock()
 		f.write('ipython --matplotlib=auto /users/popeb/keplersmear/periodograms.py %s %s > %s%s_output.txt\n' 
-			% (star, ddir,star,ddir))
+			% (star, ddir,ddir,star))
 	f.close()
 
 	print_time(clock()-first)
