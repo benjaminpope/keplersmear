@@ -15,7 +15,7 @@ mpl.rcParams['savefig.dpi']= 200             #72
 if __name__ == '__main__':
 	ap = ArgumentParser(description='Process smear light curves for periodograms')
 	ap.add_argument('star', type=str,  help='Input star name.')
-	ap.add_argument('ddir', type=str,  help='Input star name.')
+	ap.add_argument('ddir', type=str,  help='Input data directory.')
 
 	args = ap.parse_args()
 	star = args.star
