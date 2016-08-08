@@ -26,7 +26,7 @@ if __name__ == '__main__':
 
 	lspmin, lspmax = 1./24.,100
 
-	freqs = np.linspace(1./lspmax, 1./lspmin, 48000)*2.*np.pi
+	freqs = np.linspace(1./lspmax, 1./lspmin, 18000)*2.*np.pi
 
 	for star in stars:
 		print 'Doing star %s' % star.replace ("_", " ")
