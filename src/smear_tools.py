@@ -1098,6 +1098,7 @@ def stitch_lcs(out_dir,name,smear_type,do_plot=True):
     smooth = np.array([])
     quarterlist = np.array([])
     medflux = np.array([])
+    cadence = np.array([])
     background = np.array([])
 
     for j in range(18):
@@ -1108,6 +1109,7 @@ def stitch_lcs(out_dir,name,smear_type,do_plot=True):
             thisflux = lc['FLUX']
             thisflux4 = lc['FLUX_CORR_4']
             thisflux8 = lc['FLUX_CORR_8']
+            thesecads = lc['CADENCENO']
             medflux = np.append(medflux,np.ones_like(thisflux)*medsig(thisflux)[0])
             thisflux /= medsig(thisflux)[0]
             thisflux4 /= medsig(thisflux4)[0]
@@ -1123,6 +1125,7 @@ def stitch_lcs(out_dir,name,smear_type,do_plot=True):
             smooth = np.concatenate((smooth,thissmooth))
             quarterlist = np.concatenate((quarterlist,thisq))
             background = np.concatenate((background,lc['BACKGROUND']))
+            cadence = np.concatenate((cadence,thesecads))
         except:
             print 'Failed on Quarter',j
             continue
@@ -1133,6 +1136,7 @@ def stitch_lcs(out_dir,name,smear_type,do_plot=True):
     # smooth *= medsig(medflux)[0]
 
     newlc = Table({'BJD':time,
+                   'CADENCENO':cadence,
                    'FLUX':flux,
                    'FLUX_CORR_4':flux4,
                    'FLUX_CORR_8':flux8,
