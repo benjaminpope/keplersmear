@@ -46,49 +46,49 @@ if __name__ == '__main__':
 
 	# do and plot a lomb-scargle periodogram
 
-	lsp = my_lombscargle(thesetimes,thesefluxes,freqs)
+	# lsp = my_lombscargle(thesetimes,thesefluxes,freqs)
 
-	plt.clf()
-	plt.plot(freqs/2./np.pi*11.57,np.sqrt(lsp)*1e6,'k')
-	# plt.plot(1./(freqs/2./np.pi),(lsp/lsp.max()),'r')
-
-	fmax = (freqs/2./np.pi*11.57)[np.argmax(lsp)]
-	print 'Best period',1./fmax
-	print 'Best frequency',fmax
-	plt.xlabel(r'Frequency ($\mu$Hz)')
-	plt.ylabel('Amplitude (ppm)')
-	plt.title('Periodogram of %s Oscillations' % star.replace ("_", " "),y=1.02)
-
-	plt.savefig('%s%s_periodogram_low.png' % (ddir,star))
-	print 'Saved periodogram to %s%s_periodogram_low.png' % (ddir,star)
-
-	print_time(clock()-starttime)
-
-	# print 'Doing planet search'
-
-	# # now do a BLS search
-
-	# lc = Table({'SAP_FLUX':corr_flux,
-	# 			'SAP_QUALITY':~np.isfinite(corr_flux),
-	# 			'GP_FCOR':corr_flux,
-	# 		   'BJD':time,
-	# 		   'GP_TIME':filt})
-
-	# period_range = (0.7,500)
-
-	# bls_results, bls_epoch, bls_dur = bls_fold(20000000,lc, whiten='gp', verbose=True,
-	# 	savefigs=False,period_range=period_range,campaign='Nominal', 
-	# 		 threshold = 100,figdir ='.')
-
-	# folded = fold(time,bls_results.bper)
 	# plt.clf()
-	# plt.plot(folded,lc['GP_FCOR'],'.k')
-	# plt.xlabel('Phase')
-	# plt.ylabel('Flux')
-	# plt.title('%s Folded Light Curve' % star.replace ("_", " "),y=1.02)
-	# plt.savefig('%s%s_folded.png' % (ddir,star))
-	# print 'Saved planet search to %s%s_folded.png' % (ddir,star)
+	# plt.plot(freqs/2./np.pi*11.57,np.sqrt(lsp)*1e6,'k')
+	# # plt.plot(1./(freqs/2./np.pi),(lsp/lsp.max()),'r')
 
-	# print_time(clock()-first)
+	# fmax = (freqs/2./np.pi*11.57)[np.argmax(lsp)]
+	# print 'Best period',1./fmax
+	# print 'Best frequency',fmax
+	# plt.xlabel(r'Frequency ($\mu$Hz)')
+	# plt.ylabel('Amplitude (ppm)')
+	# plt.title('Periodogram of %s Oscillations' % star.replace ("_", " "),y=1.02)
+
+	# plt.savefig('%s%s_periodogram_low.png' % (ddir,star))
+	# print 'Saved periodogram to %s%s_periodogram_low.png' % (ddir,star)
+
+	# print_time(clock()-starttime)
+
+	print 'Doing planet search'
+
+	# now do a BLS search
+
+	lc = Table({'SAP_FLUX':corr_flux,
+				'SAP_QUALITY':~np.isfinite(corr_flux),
+				'GP_FCOR':corr_flux,
+			   'BJD':time,
+			   'GP_TIME':filt})
+
+	period_range = (0.7,500)
+
+	bls_results, bls_epoch, bls_dur = bls_fold(20000000,lc, whiten='gp', verbose=True,
+		savefigs=False,period_range=period_range,campaign='Nominal', 
+			 threshold = 100,figdir ='.')
+
+	folded = fold(time,bls_results.bper)*bls_results.bper
+	plt.clf()
+	plt.plot(folded,lc['GP_FCOR']-lc['GP_TIME'],'.k')
+	plt.xlabel('Phase')
+	plt.ylabel('Flux')
+	plt.title('%s Folded Light Curve' % (star.replace ("_", " "),y=1.02)
+	plt.savefig('%s%s_folded.png' % (ddir,star))
+	print 'Saved planet search to %s%s_folded.png' % (ddir,star)
+
+	print_time(clock()-first)
 
 	print 'Finished!'
