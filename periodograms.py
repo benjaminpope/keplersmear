@@ -85,7 +85,7 @@ if __name__ == '__main__':
 	plt.plot(folded,lc['GP_FCOR']-lc['GP_TIME'],'.k')
 	plt.xlabel('Phase')
 	plt.ylabel('Flux')
-	plt.title('%s Folded Light Curve' % (star.replace ("_", " "),y=1.02)
+	plt.title('%s Folded Light Curve' % (star.replace ("_", " ")),y=1.02)
 	plt.savefig('%s%s_folded.png' % (ddir,star))
 	print 'Saved planet search to %s%s_folded.png' % (ddir,star)
 
