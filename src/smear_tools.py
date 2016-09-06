@@ -7,6 +7,7 @@ from glob import glob
 import sys
 from time import time as clock
 import json
+import urllib
 
 import fitsio
 import scipy.io as sio
