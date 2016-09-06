@@ -31,6 +31,8 @@ if __name__ == '__main__':
 					help = 'do all quarters')
 	ap.add_argument('--just-stitch',action='store_true', default = False, \
 					help='just stitch together quarters without recalculating')
+	ap.add_argument('--stitch',action='store_true', default = True, \
+					help='do you stitch together quarters at all')
 	ap.add_argument('--sig-clip',action='store_true', default = True, \
 					help='sigma clip before correcting with CBVs')
 
@@ -43,6 +45,7 @@ if __name__ == '__main__':
 	do_plot = args.do_plot 
 	smear_type = args.smear_type
 	cat_file = args.cat_file
+	stitch = args.stitch
 	sig_clip = args.sig_clip
 
 	out_dir = 'kepler_smear/'
@@ -68,12 +71,13 @@ if __name__ == '__main__':
 				print '\nFailed on Quarter %d' % quarter
 
 			print_time(clock()-starttime)
+	
+	if stitch:
+		print 'Now doing the full lightcurve!'
 
-	print 'Now doing the full lightcurve!'
+		newlc = stitch_lcs(out_dir,name,smear_type,do_plot=do_plot)
 
-	newlc = stitch_lcs(out_dir,name,smear_type,do_plot=do_plot)
-
-	newlc.write('%s%s_smear_full%s.csv' % (out_dir,name,smear_name(smear_type)))
-	print 'Saved lightcurve to %s%s_smear_full%s.csv' % (out_dir,name,smear_name(smear_type))
+		newlc.write('%s%s_smear_full%s.csv' % (out_dir,name,smear_name(smear_type)))
+		print 'Saved lightcurve to %s%s_smear_full%s.csv' % (out_dir,name,smear_name(smear_type))
 
 	print_time(clock()-starttime)

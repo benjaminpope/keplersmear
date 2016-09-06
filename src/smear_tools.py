@@ -934,13 +934,15 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
     cbvfile = glob('%s*q%02d*.fits' % (cbvdir,quarter))[0] # this should be unique
     
     # do this for both 4 and 8 cbvs just to check diversity
-    flux4s = np.copy(flux)
-    flux8s = np.copy(flux)
+    flux4s = np.zeros((5,bjd.shape[0]))
+    flux8s = np.zeros((5,bjd.shape[0]))
 
     for aperture in range(5):
         print 'Doing aperture', aperture
         dummy = lc.copy()
         dummy['FLUX'] = flux[aperture,:]
+
+        ### First do 4 CBVs
 
         cbtime, cbcadence, cbraw_flux, flux_cbv4, cbweights = cbv.correct_smear(dummy, 
             cbvfile, name, quarter, mod,out, nB = 4, outfile = None, 
@@ -962,6 +964,8 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
             plt.savefig('%slc_corr4_%s_q%d.png' % (out_dir,name,quarter))
             print 'Saved corrected light curve to %slc_corr4_%s_q%d.png' % (out_dir,name,quarter)
             plt.clf()
+
+        ### Now do 8 CBVs
 
         dummy = lc.copy()
         cbtime, cbcadence, cbraw_flux, flux_cbv8, cbweights = cbv.correct_smear(dummy, 
@@ -986,11 +990,11 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
             plt.clf()
 
         # now save the lightcurve
-        flux4s = flux_cbv4
-        flux8s = flux_cbv8
+        flux4s[aperture,:] = flux_cbv4
+        flux8s[aperture,:] = flux_cbv8
 
         lc['FLUX%d_CORR_4' % aperture] = flux_cbv4
-        lc['FLUX%d_CORR_8' % aperture]
+        lc['FLUX%d_CORR_8' % aperture] = flux_cbv8
 
     for j in range(5):
         mm, ss = medsig(flux4s[j,:])
