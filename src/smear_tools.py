@@ -503,8 +503,8 @@ def get_pixel_mast(ra,dec,season):
     cd1_2 = -0.000853190160515
     cd2_1 = -0.000853190160515
     cd2_2 = -0.000702794927969
-    cd = array([[cd1_1,cd1_2],[cd2_1,cd2_2]])
-    cd = linalg.inv(cd)
+    cd = np.array([[cd1_1,cd1_2],[cd2_1,cd2_2]])
+    cd = np.linalg.inv(cd)
 
     #   coordinate limits
 
