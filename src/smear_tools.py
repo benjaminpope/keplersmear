@@ -511,8 +511,8 @@ def get_pixel_mast(ra,dec,season):
     x1 = 1.0e30
     x2 = x1
     darcsec /= 3600.0
-    ra1 = ra - darcsec / 15.0 / cos(dec * pi / 180)
-    ra2 = ra + darcsec / 15.0 / cos(dec * pi / 180)
+    ra1 = ra - darcsec / 15.0 / np.cos(dec * pi / 180)
+    ra2 = ra + darcsec / 15.0 / np.cos(dec * pi / 180)
     dec1 = dec - darcsec
     dec2 = dec + darcsec
 
