@@ -6,6 +6,7 @@ from os.path import exists
 from glob import glob
 import sys
 from time import time as clock
+import json
 
 import fitsio
 import scipy.io as sio
@@ -36,7 +37,7 @@ import re
 import george
 from george import kernels
 
-from my_kepffi import MASTRADec, sex2dec
+from my_kepffi import sex2dec
 # from smearcorrection import *
 from kepsys import cbv
 
@@ -61,6 +62,35 @@ def medsig(array):
     med = np.median(array[l])
     sig = 1.48 * np.median(abs(array[l] - med))
     return med, sig
+
+
+###----------------------------------------------
+###----------------------------------------------
+
+def sex2dec(ra,dec):
+    '''Copied from Tom Barclay's PyKE'''
+
+    ra = re.sub('\s+','|',ra.strip())
+    ra = re.sub(':','|',ra.strip())
+    ra = re.sub(';','|',ra.strip())
+    ra = re.sub(',','|',ra.strip())
+    ra = re.sub('-','|',ra.strip())
+    ra = ra.split('|')
+    outra = (float(ra[0]) + float(ra[1]) / 60 + float(ra[2]) / 3600) * 15.0
+
+    dec = re.sub('\s+','|',dec.strip())
+    dec = re.sub(':','|',dec.strip())
+    dec = re.sub(';','|',dec.strip())
+    dec = re.sub(',','|',dec.strip())
+    # dec = re.sub('-.','|',dec.strip())
+    dec = dec.split('|')
+    if float(dec[0]) > 0.0:
+        outdec = float(dec[0]) + float(dec[1]) / 60 + float(dec[2]) / 3600
+    else:
+        outdec = float(dec[0]) - float(dec[1]) / 60 - float(dec[2]) / 3600
+
+    return outra, outdec
+
 
 ###----------------------------------------------
 ###----------------------------------------------
@@ -467,8 +497,42 @@ def get_pixel_csv(epic,csv_file='C05_smear.csv'):
 def get_pixel_mast(ra,dec,season):
     '''Use MAST to get a pixel position'''
 
-    kepid,ra,dec,kepmag,skygroup,channel,module,output,row,column \
-                = MASTRADec(ra,dec,8.0,season)
+    darcsec = 8.0
+
+    cd1_1 = 0.000702794927969
+    cd1_2 = -0.000853190160515
+    cd2_1 = -0.000853190160515
+    cd2_2 = -0.000702794927969
+    cd = array([[cd1_1,cd1_2],[cd2_1,cd2_2]])
+    cd = linalg.inv(cd)
+
+    #   coordinate limits
+
+    x1 = 1.0e30
+    x2 = x1
+    darcsec /= 3600.0
+    ra1 = ra - darcsec / 15.0 / cos(dec * pi / 180)
+    ra2 = ra + darcsec / 15.0 / cos(dec * pi / 180)
+    dec1 = dec - darcsec
+    dec2 = dec + darcsec
+
+    # build mast query
+
+    url  = 'http://archive.stsci.edu/kepler/kepler_fov/search.php?'
+    url += 'action=Search'
+    url += '&kic_degree_ra=' + str(ra1) + '..' + str(ra2)
+    url += '&kic_dec=' + str(dec1) + '..' + str(dec2)
+    url += '&max_records=100'
+    url += '&verb=3'
+    url += '&outputformat=JSON'
+
+    data = json.loads(urllib.urlopen(url).read()[1:-1])
+
+    row = data['Row_%d' % season]
+    column = data['Column_%d' % season]
+    channel = data['Channel_%d' % season]
+    module = data['Module_%d' % season]
+    output = data['Output_%d' % season]
 
     return int(row),int(column),int(channel),int(module),int(output)
 
@@ -869,52 +933,78 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
     cbvfile = glob('%s*q%02d*.fits' % (cbvdir,quarter))[0] # this should be unique
     
     # do this for both 4 and 8 cbvs just to check diversity
+    flux4s = np.copy(flux)
+    flux8s = np.copy(flux)
 
-    cbtime, cbcadence, cbraw_flux, flux_cbv4, cbweights = cbv.correct_smear(lc, 
-        cbvfile, name, quarter, mod,out, nB = 4, outfile = None, 
-        exclude_func = None, exclude_func_par = None, doPlot = True)
-
-    if sig_clip:
+    for aperture in range(5):
+        print 'Doing aperture', aperture
         dummy = lc.copy()
-        smooth4 = NIF(flux_cbv4,101,15)
-        white4 = dummy['FLUX'] - smooth4
-        mm, ss = medsig(white4)
-        outliers = (np.abs(white4)> (4*ss))
-        dummy['FLUX'][outliers] = np.nan
+        dummy['FLUX'] = flux[aperture,:]
 
         cbtime, cbcadence, cbraw_flux, flux_cbv4, cbweights = cbv.correct_smear(dummy, 
             cbvfile, name, quarter, mod,out, nB = 4, outfile = None, 
             exclude_func = None, exclude_func_par = None, doPlot = True)
 
-    if do_plot:
-        plt.savefig('%slc_corr4_%s_q%d.png' % (out_dir,name,quarter))
-        print 'Saved corrected light curve to %slc_corr4_%s_q%d.png' % (out_dir,name,quarter)
-        plt.clf()
+        if sig_clip:
+            dummy = lc.copy()
+            smooth4 = NIF(flux_cbv4,101,15)
+            white4 = dummy['FLUX'] - smooth4
+            mm, ss = medsig(white4)
+            outliers = (np.abs(white4)> (4*ss))
+            dummy['FLUX'][outliers] = np.nan
 
-    cbtime, cbcadence, cbraw_flux, flux_cbv8, cbweights = cbv.correct_smear(lc, 
-        cbvfile, name, quarter, mod,out, nB = 8, outfile = None, 
-        exclude_func = None, exclude_func_par = None, doPlot = True)
+            cbtime, cbcadence, cbraw_flux, flux_cbv4, cbweights = cbv.correct_smear(dummy, 
+                cbvfile, name, quarter, mod,out, nB = 4, outfile = None, 
+                exclude_func = None, exclude_func_par = None, doPlot = True)
 
-    if sig_clip:
+        if do_plot:
+            plt.savefig('%slc_corr4_%s_q%d.png' % (out_dir,name,quarter))
+            print 'Saved corrected light curve to %slc_corr4_%s_q%d.png' % (out_dir,name,quarter)
+            plt.clf()
+
         dummy = lc.copy()
-        smooth8 = NIF(flux_cbv8,101,15)
-        white8 = dummy['FLUX'] - smooth8
-        mm, ss = medsig(white4)
-        outliers = (np.abs(white8)> (4*ss))
-        dummy['FLUX'][outliers] = np.nan
-
         cbtime, cbcadence, cbraw_flux, flux_cbv8, cbweights = cbv.correct_smear(dummy, 
             cbvfile, name, quarter, mod,out, nB = 8, outfile = None, 
             exclude_func = None, exclude_func_par = None, doPlot = True)
 
-    if do_plot:
-        plt.savefig('%slc_corr8_%s_q%d.png' % (out_dir,name,quarter))
-        print 'Saved corrected light curve to %slc_corr8_%s_q%d.png' % (out_dir,name,quarter)
-        plt.clf()
+        if sig_clip:
+            dummy = lc.copy()
+            smooth8 = NIF(flux_cbv8,101,15)
+            white8 = dummy['FLUX'] - smooth8
+            mm, ss = medsig(white4)
+            outliers = (np.abs(white8)> (4*ss))
+            dummy['FLUX'][outliers] = np.nan
 
-    # now save the lightcurve
-    lc['FLUX_CORR_4'] = flux_cbv4
-    lc['FLUX_CORR_8'] = flux_cbv8
+            cbtime, cbcadence, cbraw_flux, flux_cbv8, cbweights = cbv.correct_smear(dummy, 
+                cbvfile, name, quarter, mod,out, nB = 8, outfile = None, 
+                exclude_func = None, exclude_func_par = None, doPlot = True)
+
+        if do_plot:
+            plt.savefig('%slc_corr8_%s_q%d.png' % (out_dir,name,quarter))
+            print 'Saved corrected light curve to %slc_corr8_%s_q%d.png' % (out_dir,name,quarter)
+            plt.clf()
+
+        # now save the lightcurve
+        flux4s = flux_cbv4
+        flux8s = flux_cbv8
+
+        lc['FLUX%d_CORR_4' % aperture] = flux_cbv4
+        lc['FLUX%d_CORR_8' % aperture]
+
+    for j in range(5):
+        mm, ss = medsig(flux4s[j,:])
+        sigs[j] = ss/mm
+
+    best_aperture4 = np.argmin(sigs)
+
+    for j in range(5):
+        mm, ss = medsig(flux8s[j,:])
+        sigs[j] = ss/mm
+
+    best_aperture8 = np.argmin(sigs)
+
+    lc['FLUX_CORR_4'] = flux4s[best_aperture4]
+    lc['FLUX_CORR_8'] = flux8s[best_aperture8]
 
     return lc 
 
