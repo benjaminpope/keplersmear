@@ -1189,8 +1189,8 @@ def stitch_lcs(out_dir,name,smear_type,do_plot=True):
     flux = np.array([])
     flux4 = np.array([])
     flux8 = np.array([])
-    allf4s = np.array([])
-    allf8s = np.array([])
+    allf4s = np.zeros((5,0))
+    allf8s = np.zeros((5,0))
     time = np.array([])
     smooth = np.array([])
     quarterlist = np.array([])
@@ -1206,10 +1206,10 @@ def stitch_lcs(out_dir,name,smear_type,do_plot=True):
             thisflux = lc['FLUX']
             thisflux4 = lc['FLUX_CORR_4']
             thisflux8 = lc['FLUX_CORR_8']
-            thesecads = lc['CADENCENO']
+            thesecads = lc['CAD']
             ncad = np.size(thesecads)
-            f4s  = np.zeros(5,ncad)
-            f8s = np.zeros(5,ncad)
+            f4s  = np.zeros((5,ncad))
+            f8s = np.zeros((5,ncad))
 
             for j in range(5): # do all the corrected fluxes
                 f4s[j] = lc['FLUX%d_CORR_4' % j]
@@ -1228,8 +1228,8 @@ def stitch_lcs(out_dir,name,smear_type,do_plot=True):
             flux = np.concatenate((flux,thisflux))
             flux4 = np.concatenate((flux4,thisflux4))
             flux8 = np.concatenate((flux8,thisflux8))
-            allf4s = np.concatenate((allf4s,f4s))
-            allf8s = np.concatenate((allf8s,f8s))
+            allf4s = np.concatenate((allf4s,f4s),axis=1)
+            allf8s = np.concatenate((allf8s,f8s),axis=1)
             time = np.concatenate((time,thistime))
             smooth = np.concatenate((smooth,thissmooth))
             quarterlist = np.concatenate((quarterlist,thisq))
@@ -1256,8 +1256,8 @@ def stitch_lcs(out_dir,name,smear_type,do_plot=True):
                 })
 
     for j in range(5):
-        lc['FLUX%d_CORR_4' % j] = allf4s[:,j]
-        lc['FLUX%d_CORR_8' % j] = allf8s[:,j]
+        newlc['FLUX%d_CORR_4' % j] = allf4s[j,:]
+        newlc['FLUX%d_CORR_8' % j] = allf8s[j,:]
 
     if do_plot:
         plt.clf()
