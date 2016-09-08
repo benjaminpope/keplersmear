@@ -746,10 +746,10 @@ def extract_lc(smear,starposes,background,width,col=None):
         # make a psf
         # psf = cosbell(poses,np.round(starposes[j]*4)/4.,width,taper,subsample=8)
         psf = supergaussian_bin(poses,starposes[j],width)
-        psf /= psf.max()
+        psf /= np.nanmax(psf)
 
         #extract a flux
-        flux[j] = np.sum((psf/psf.max())*starflux[j,:]) - np.sum(psf)*background[j]
+        flux[j] = np.sum((psf)*starflux[j,:]) - np.sum(psf)*background[j]
 
     return flux
 
@@ -794,7 +794,7 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
     mjd = np.copy(smear['MJD'][np.isfinite(smear['MJD'])])
     bjd = np.copy(smear['MJD'])
     bjd[np.isfinite(smear['MJD'])] = mjd2bjd(mjd,ra,dec)
-    t0 = bjd[np.isfinite(bjd)].min()
+    t0 = np.nanmin(bjd)
 
     print 'Corrected MJD to bjd'
 
@@ -954,11 +954,12 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
             white4 = dummy['FLUX'] - smooth4
             mm, ss = medsig(white4)
             outliers = (np.abs(white4)> (4*ss))
-            dummy['FLUX'][outliers] = np.nan
+            if np.sum(outliers) < 0.2*ncad:
+                dummy['FLUX'][outliers] = np.nan
 
-            cbtime, cbcadence, cbraw_flux, flux_cbv4, cbweights = cbv.correct_smear(dummy, 
-                cbvfile, name, quarter, mod,out, nB = 4, outfile = None, 
-                exclude_func = None, exclude_func_par = None, doPlot = True)
+                cbtime, cbcadence, cbraw_flux, flux_cbv4, cbweights = cbv.correct_smear(dummy, 
+                    cbvfile, name, quarter, mod,out, nB = 4, outfile = None, 
+                    exclude_func = None, exclude_func_par = None, doPlot = True)
 
         if do_plot:
             plt.savefig('%slc_corr4_%s_q%d.png' % (out_dir,name,quarter))
@@ -976,13 +977,14 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
             dummy = lc.copy()
             smooth8 = NIF(flux_cbv8,101,15)
             white8 = dummy['FLUX'] - smooth8
-            mm, ss = medsig(white4)
-            outliers = (np.abs(white8)> (4*ss))
-            dummy['FLUX'][outliers] = np.nan
+            mm, ss = medsig(white8)
+            if np.sum(outliers) < 0.2*ncad:
+                outliers = (np.abs(white8)> (4*ss))
+                dummy['FLUX'][outliers] = np.nan
 
-            cbtime, cbcadence, cbraw_flux, flux_cbv8, cbweights = cbv.correct_smear(dummy, 
-                cbvfile, name, quarter, mod,out, nB = 8, outfile = None, 
-                exclude_func = None, exclude_func_par = None, doPlot = True)
+                cbtime, cbcadence, cbraw_flux, flux_cbv8, cbweights = cbv.correct_smear(dummy, 
+                    cbvfile, name, quarter, mod,out, nB = 8, outfile = None, 
+                    exclude_func = None, exclude_func_par = None, doPlot = True)
 
         if do_plot:
             plt.savefig('%slc_corr8_%s_q%d.png' % (out_dir,name,quarter))
@@ -1052,7 +1054,7 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
     mjd = np.copy(smear['MJD'][np.isfinite(smear['MJD'])])
     bjd = np.copy(smear['MJD'])
     bjd[np.isfinite(smear['MJD'])] = mjd2bjd(mjd,ra,dec)
-    t0 = bjd[np.isfinite(bjd)].min()
+    t0 = np.nanmin(bjd)
 
     print 'Corrected MJD to bjd'
 
@@ -1108,6 +1110,8 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
             widths[j],col=smear_type)
         mm, ss = medsig(flux[j,:])
         sigs[j] = ss/mm
+        if ~np.isfinite(sigs[j]):  
+            sigs[j] = 1e10
 
     best_aperture = np.argmin(sigs)
 
@@ -1131,8 +1135,6 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
         plt.title('%s Optimal Light curve' % (name))
         plt.savefig('%s%s_lc_best.png' % (out_dir,name))
         print 'Saved best light curve to %s%s_lc_best.png' % (out_dir,name)
-
-
             # query mast for the nearest object
 
     try:

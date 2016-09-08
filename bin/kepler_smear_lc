@@ -33,7 +33,7 @@ if __name__ == '__main__':
 					help='just stitch together quarters without recalculating')
 	ap.add_argument('--stitch',action='store_true', default = True, \
 					help='do you stitch together quarters at all')
-	ap.add_argument('--sig-clip',action='store_true', default = True, \
+	ap.add_argument('--sig-clip',action='store_true', default = False, \
 					help='sigma clip before correcting with CBVs')
 
 	args = ap.parse_args()
