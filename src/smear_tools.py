@@ -303,7 +303,7 @@ def my_lombscargle(times,fluxes,freqs,norm=True):
     lsp = lombscargle(thesetimes,thesefluxes,freqs)*4./ndata/medflux
 
     # if norm == True:
-    #     lsp /= medflux
+    #    lsp /= medflux
 
     return lsp
 
@@ -907,7 +907,7 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
 
         for key in lc.keys():
             if 'FLUX' in key:
-                lc[key][bad] = np.nan            
+                lc[key][bad] = np.nan         
 
     censoredlc = censor_bad_cads(lc,quarter,gap_file=gap_file)
 
@@ -954,9 +954,8 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
             white4 = dummy['FLUX'] - smooth4
             mm, ss = medsig(white4)
             outliers = (np.abs(white4)> (4*ss))
-            if np.sum(outliers) < 0.2*ncad:
+            if np.sum(outliers) < (0.2*ncad):
                 dummy['FLUX'][outliers] = np.nan
-
                 cbtime, cbcadence, cbraw_flux, flux_cbv4, cbweights = cbv.correct_smear(dummy, 
                     cbvfile, name, quarter, mod,out, nB = 4, outfile = None, 
                     exclude_func = None, exclude_func_par = None, doPlot = True)
@@ -978,10 +977,9 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
             smooth8 = NIF(flux_cbv8,101,15)
             white8 = dummy['FLUX'] - smooth8
             mm, ss = medsig(white8)
-            if np.sum(outliers) < 0.2*ncad:
-                outliers = (np.abs(white8)> (4*ss))
+            outliers = (np.abs(white8)> (4*ss))
+            if np.sum(outliers) < (0.2*ncad):
                 dummy['FLUX'][outliers] = np.nan
-
                 cbtime, cbcadence, cbraw_flux, flux_cbv8, cbweights = cbv.correct_smear(dummy, 
                     cbvfile, name, quarter, mod,out, nB = 8, outfile = None, 
                     exclude_func = None, exclude_func_par = None, doPlot = True)
