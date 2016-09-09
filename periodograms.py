@@ -46,23 +46,23 @@ if __name__ == '__main__':
 
 	# do and plot a lomb-scargle periodogram
 
-	# lsp = my_lombscargle(thesetimes,thesefluxes,freqs)
+	lsp = my_lombscargle(thesetimes,thesefluxes,freqs)
 
-	# plt.clf()
-	# plt.plot(freqs/2./np.pi*11.57,np.sqrt(lsp)*1e6,'k')
-	# # plt.plot(1./(freqs/2./np.pi),(lsp/lsp.max()),'r')
+	plt.clf()
+	plt.plot(freqs/2./np.pi*11.57,np.sqrt(lsp)*1e6,'k')
+	# plt.plot(1./(freqs/2./np.pi),(lsp/lsp.max()),'r')
 
-	# fmax = (freqs/2./np.pi*11.57)[np.argmax(lsp)]
-	# print 'Best period',1./fmax
-	# print 'Best frequency',fmax
-	# plt.xlabel(r'Frequency ($\mu$Hz)')
-	# plt.ylabel('Amplitude (ppm)')
-	# plt.title('Periodogram of %s Oscillations' % star.replace ("_", " "),y=1.02)
+	fmax = (freqs/2./np.pi*11.57)[np.argmax(lsp)]
+	print 'Best period',1./fmax
+	print 'Best frequency',fmax
+	plt.xlabel(r'Frequency ($\mu$Hz)')
+	plt.ylabel('Amplitude (ppm)')
+	plt.title('Periodogram of %s Oscillations' % star.replace ("_", " "),y=1.02)
 
-	# plt.savefig('%s%s_periodogram_low.png' % (ddir,star))
-	# print 'Saved periodogram to %s%s_periodogram_low.png' % (ddir,star)
+	plt.savefig('%s%s_periodogram_low.png' % (ddir,star))
+	print 'Saved periodogram to %s%s_periodogram_low.png' % (ddir,star)
 
-	# print_time(clock()-starttime)
+	print_time(clock()-starttime)
 
 	print 'Doing planet search'
 
