@@ -1211,11 +1211,11 @@ def stitch_lcs(out_dir,name,smear_type,do_plot=True):
             f4s  = np.zeros((5,ncad))
             f8s = np.zeros((5,ncad))
 
-            for j in range(5): # do all the corrected fluxes
-                f4s[j] = lc['FLUX%d_CORR_4' % j]
-                f8s[j] = lc['FLUX%d_CORR_8' % j]
-                f4s[j] /= medsig(f4s[j])[0]
-                f8s[j] /= medsig(f8s[j])[0]
+            for k in range(5): # do all the corrected fluxes
+                f4s[k] = lc['FLUX%d_CORR_4' % k]
+                f8s[k] = lc['FLUX%d_CORR_8' % k]
+                f4s[k] /= medsig(f4s[k])[0]
+                f8s[k] /= medsig(f8s[k])[0]
 
             medflux = np.append(medflux,np.ones_like(thisflux)*medsig(thisflux)[0])
             thisflux /= medsig(thisflux)[0]
