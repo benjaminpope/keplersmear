@@ -101,7 +101,7 @@ if __name__ == '__main__':
 		savefigs=False,period_range=period_range,campaign='Nominal', 
 			 threshold = 100,figdir ='.')
 
-	folded = fold(time,bls_results.bper)*bls_results.bper
+	folded = fold(time-bls_epoch,bls_results.bper,origo=0.5)*bls_results.bper
 	plt.clf()
 	plt.plot(folded,lc['GP_FCOR']-lc['GP_TIME'],'.k')
 	plt.xlabel('Phase')
