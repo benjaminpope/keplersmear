@@ -9,7 +9,7 @@ from keplersmear.smear_tools import *
 
 import matplotlib as mpl 
 mpl.style.use('seaborn-colorblind')
-mpl.rcParams['savefig.dpi']= 200             #72 
+mpl.rcParams['savefig.dpi']= 200			 #72 
 
 
 if __name__ == '__main__':
@@ -40,21 +40,21 @@ if __name__ == '__main__':
 	data = data[good]
 
 	sigs = []
-    for q in range(17):
-        m = data['QUARTER'] == q
+	for q in range(17):
+		m = data['QUARTER'] == q
 
-        med, sig = medsig(data['FLUX_CORR_8'][m])
+		med, sig = medsig(data['FLUX_CORR_8'][m])
 
-        sigs.append(sig/med)
+		sigs.append(sig/med)
 
-    sigs = np.array(sigs)
-    m2, s2 = medsig(sigs)
+	sigs = np.array(sigs)
+	m2, s2 = medsig(sigs)
 
-    for q in range(17):
-    	if np.abs(m2-sigs[q]) > (2*s2):
-    		m = data['QUARTER'] != q
-    		data = data[m]
-    		print 'Throwing away quarter', q
+	for q in range(17):
+		if np.abs(m2-sigs[q]) > (2*s2):
+			m = data['QUARTER'] != q
+			data = data[m]
+			print 'Throwing away quarter', q
 
 	time, flux, corr_flux, filt, quarters = data['BJD'], data['FLUX'],\
 	 data['FLUX_CORR_8'], data['FILT'], data['QUARTER']
@@ -92,8 +92,8 @@ if __name__ == '__main__':
 	lc = Table({'SAP_FLUX':corr_flux,
 				'SAP_QUALITY':~np.isfinite(corr_flux),
 				'GP_FCOR':corr_flux,
-			    'BJD':time,
-			    'GP_TIME':filt})
+				'BJD':time,
+				'GP_TIME':filt})
 
 	period_range = (0.7,100)
 
