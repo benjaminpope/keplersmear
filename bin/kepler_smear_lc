@@ -37,6 +37,8 @@ if __name__ == '__main__':
 					help='sigma clip before correcting with CBVs')
 	ap.add_argument('--combine',action='store_true', default = False, \
 					help='Try to optimally combine')
+	ap.add_argument('--thresh',type=float, default = 2.5, \
+					help='What threshold to use')
 
 
 	args = ap.parse_args()
@@ -51,6 +53,7 @@ if __name__ == '__main__':
 	stitch = args.stitch
 	sig_clip = args.sig_clip
 	combine = args.combine
+	thresh = args.thresh
 
 	out_dir = 'kepler_smear/'
 	cbvdir = '/kepler/kepler/FITS/'
@@ -86,7 +89,7 @@ if __name__ == '__main__':
 
 	if combine:
 		print 'Optimally combining both smear registers'
-		bestlc = stitch_combine(out_dir,name,do_plot=do_plot)
+		bestlc = stitch_combine(out_dir,name,do_plot=do_plot,thresh=thresh)
 		bestlc.write('%s%s_smear_combined.csv' % (out_dir,name))
 
 	print_time(clock()-starttime)

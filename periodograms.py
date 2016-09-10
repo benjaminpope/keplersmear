@@ -32,6 +32,7 @@ if __name__ == '__main__':
 
 	# read in data
 	try:
+		print 'Using combined'
 		data = Table.read('%s%s_smear_combined.csv' % (ddir,star))
 	except:
 		data = Table.read('%s%s_smear_full.csv' % (ddir,star))
@@ -74,10 +75,10 @@ if __name__ == '__main__':
 	lc = Table({'SAP_FLUX':corr_flux,
 				'SAP_QUALITY':~np.isfinite(corr_flux),
 				'GP_FCOR':corr_flux,
-			   'BJD':time,
-			   'GP_TIME':filt})
+			    'BJD':time,
+			    'GP_TIME':filt})
 
-	period_range = (0.7,500)
+	period_range = (0.7,100)
 
 	bls_results, bls_epoch, bls_dur = bls_fold(20000000,lc, whiten='gp', verbose=True,
 		savefigs=False,period_range=period_range,campaign='Nominal', 
