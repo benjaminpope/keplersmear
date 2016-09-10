@@ -104,6 +104,7 @@ if __name__ == '__main__':
 	folded = fold(time-bls_epoch,bls_results.bper,origo=0.5)*bls_results.bper
 	plt.clf()
 	plt.plot(folded,lc['GP_FCOR']-lc['GP_TIME'],'.k')
+	plt.axvline(0.5)
 	plt.xlabel('Phase')
 	plt.ylabel('Flux')
 	plt.title('%s Folded Light Curve' % (star.replace ("_", " ")),y=1.02)
