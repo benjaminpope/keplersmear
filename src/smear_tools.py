@@ -1184,7 +1184,6 @@ smear_name = lambda s: '' if s is None else str(s)
 ###----------------------------------------------
 ###----------------------------------------------
 
-
 def stitch_lcs(out_dir,name,smear_type,do_plot=True):
     flux = np.array([])
     flux4 = np.array([])
@@ -1269,3 +1268,51 @@ def stitch_lcs(out_dir,name,smear_type,do_plot=True):
         print 'Saved best light curve to %slc_best_%s.png' % (out_dir,name)
         
     return newlc
+
+def stitch_combine(out_dir,name,do_plot=True,thresh=2.5):
+    ''' you can tell the provenance by the new column SMEAR_TYPE which is 2 for both,
+    0 for masked, 1 for virtual'''
+
+    lc_masked = Table.read('%s%s_smear_full%s.csv' % (out_dir,name,smear_name('smear_flux')))
+    lc_virtual = Table.read('%s%s_smear_full%s.csv' % (out_dir,name,smear_name('vsmear_flux')))
+    lc_tot = Table.read('%s%s_smear_full.csv' % (out_dir,name))
+
+    lc_masked['SMEAR_TYPE'] = np.zeros_like(lc_masked['FLUX'])
+    lc_virtual['SMEAR_TYPE'] = np.ones_like(lc_virtual['FLUX'])
+
+    mask_sigs = []
+    virtual_sigs = []
+
+    for q in range(17):
+        m = lc_tot['QUARTER'] == q
+
+        mmed, msig = medsig(lc_masked['FLUX_CORR_8'][m])
+        vmed, vsig = medsig(lc_virtual['FLUX_CORR_8'][m])
+
+        mask_sigs.append(msig/mmed)
+        virtual_sigs.append(vsig/vmed)
+
+    mask_sigs = np.array(mask_sigs)
+    virtual_sigs = np.array(virtual_sigs)
+
+    medmasksigs = medsig(mask_sigs)[0]
+    medvirtsigs = medsig(virtual_sigs)[0]
+
+    # now go back over and pick good ones
+
+    dummy = lc_tot.copy()
+    dummy['SMEAR_TYPE'] = 2.*np.ones_like(dummy['FLUX'])
+
+    for q in range(17):
+        try:
+            m = lc_tot['QUARTER'] == q
+            if mask_sigs[q] >= thresh*(virtual_sigs[q]):
+                dummy[m] = lc_virtual[m]
+                print 'Using masked smear for quarter',q
+            elif virtual_sigs[q] >= thresh*(mask_sigs[q]):
+                dummy[m] = lc_masked[m]
+                print 'Using virtual smear for quarter',q
+        except:
+            pass
+
+    return dummy 

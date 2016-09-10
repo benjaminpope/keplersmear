@@ -31,10 +31,13 @@ if __name__ == '__main__':
 					help = 'do all quarters')
 	ap.add_argument('--just-stitch',action='store_true', default = False, \
 					help='just stitch together quarters without recalculating')
-	ap.add_argument('--stitch',action='store_true', default = True, \
+	ap.add_argument('--stitch',action='store_true', default = False, \
 					help='do you stitch together quarters at all')
 	ap.add_argument('--sig-clip',action='store_true', default = False, \
 					help='sigma clip before correcting with CBVs')
+	ap.add_argument('--combine',action='store_true', default = False, \
+					help='Try to optimally combine')
+
 
 	args = ap.parse_args()
 
@@ -79,5 +82,10 @@ if __name__ == '__main__':
 
 		newlc.write('%s%s_smear_full%s.csv' % (out_dir,name,smear_name(smear_type)))
 		print 'Saved lightcurve to %s%s_smear_full%s.csv' % (out_dir,name,smear_name(smear_type))
+
+	if combine:
+		print 'Optimally combining both smear registers'
+		bestlc = stitch_combine(out_dir,name,smear_type,do_plot=do_plot)
+		bestlc.write('%s%s_smear_combined.csv' % (out_dir,name))
 
 	print_time(clock()-starttime)
