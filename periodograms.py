@@ -54,6 +54,7 @@ if __name__ == '__main__':
     	if np.abs(m2-sigs[q]) > (2*s2):
     		m = data['QUARTER'] != q
     		data = data[m]
+    		print 'Throwing away quarter', q
 
 	time, flux, corr_flux, filt, quarters = data['BJD'], data['FLUX'],\
 	 data['FLUX_CORR_8'], data['FILT'], data['QUARTER']
