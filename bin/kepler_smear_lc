@@ -86,7 +86,7 @@ if __name__ == '__main__':
 
 	if combine:
 		print 'Optimally combining both smear registers'
-		bestlc = stitch_combine(out_dir,name,smear_type,do_plot=do_plot)
+		bestlc = stitch_combine(out_dir,name,do_plot=do_plot)
 		bestlc.write('%s%s_smear_combined.csv' % (out_dir,name))
 
 	print_time(clock()-starttime)
