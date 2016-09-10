@@ -39,6 +39,22 @@ if __name__ == '__main__':
 	good = data['QUARTER']!=0 # quarter 0 is no good
 	data = data[good]
 
+	sigs = []
+    for q in range(17):
+        m = data['QUARTER'] == q
+
+        med, sig = medsig(data['FLUX_CORR_8'][m])
+
+        sigs.append(sig/med)
+
+    sigs = np.array(sigs)
+    m2, s2 = medsig(sigs)
+
+    for q in range(17):
+    	if np.abs(m2-sigs[q]) > (2*s2):
+    		m = data['QUARTER'] != q
+    		data = data[m]
+
 	time, flux, corr_flux, filt, quarters = data['BJD'], data['FLUX'],\
 	 data['FLUX_CORR_8'], data['FILT'], data['QUARTER']
 
