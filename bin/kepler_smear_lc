@@ -50,6 +50,7 @@ if __name__ == '__main__':
 	cat_file = args.cat_file
 	stitch = args.stitch
 	sig_clip = args.sig_clip
+	combine = args.combine
 
 	out_dir = 'kepler_smear/'
 	cbvdir = '/kepler/kepler/FITS/'
