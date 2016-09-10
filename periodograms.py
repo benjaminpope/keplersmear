@@ -31,7 +31,10 @@ if __name__ == '__main__':
 	starttime = clock()
 
 	# read in data
-	data = Table.read('%s%s_smear_full.csv' % (ddir,star))
+	try:
+		data = Table.read('%s%s_smear_combined.csv' % (ddir,star))
+	except:
+		data = Table.read('%s%s_smear_full.csv' % (ddir,star))
 	good = data['QUARTER']!=0 # quarter 0 is no good
 	data = data[good]
 
