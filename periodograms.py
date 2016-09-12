@@ -101,17 +101,17 @@ if __name__ == '__main__':
 		savefigs=False,period_range=period_range,campaign='Nominal', 
 			 threshold = 100,figdir ='.')
 
-	folded = fold(time-bls_epoch,bls_results.bper,shift=0.5)*bls_results.bper
+	folded = fold(time-bls_epoch,bls_results.bper,shift=0.4)*bls_results.bper
 	plt.clf()
 	plt.plot(folded,lc['GP_FCOR']-lc['GP_TIME'],'.k')
-	plt.axvline(0.5*bls_results.bper)
+	plt.axvline(0.4*bls_results.bper)
 	plt.xlabel('Phase')
 	plt.ylabel('Flux')
 	plt.title('%s Folded Light Curve' % (star.replace ("_", " ")),y=1.02)
 	plt.savefig('%s%s_folded.png' % (ddir,star))
 	print 'Saved planet search to %s%s_folded.png' % (ddir,star)
 
-	plt.xlim(0.4*bls_results.bper,0.6*bls_results.bper)
+	plt.xlim(0.3*bls_results.bper,0.5*bls_results.bper)
 	plt.savefig('%s%s_folded_zoom.png' % (ddir,star))
 	print 'Saved planet search to %s%s_folded.png' % (ddir,star)	
 
