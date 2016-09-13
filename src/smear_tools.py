@@ -921,6 +921,7 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
         plt.savefig('%slc_bads_%s_q%d.png' % (out_dir,name,quarter))
         print 'Saved corrected light curve to %slc_bads_%s_q%d.png' % (out_dir,name,quarter)
 
+    lc = censoredlc.copy()
     # now do a jump correction
 
     # jumplc = smear_jump(lc,name,do_plot=True)
