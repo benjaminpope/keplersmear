@@ -8,7 +8,6 @@ import sys
 from time import time as clock
 import json
 import urllib
-
 import fitsio
 import scipy.io as sio
 from argparse import ArgumentParser
@@ -41,6 +40,7 @@ from george import kernels
 from my_kepffi import sex2dec
 # from smearcorrection import *
 from kepsys import cbv
+from k2sc.cdpp import cdpp
 
 
 def centroid(thisflux,thispos):
@@ -434,6 +434,7 @@ def detrend_smear(lc,epic=None,flux_type='SAP_FLUX',flare_sigma=5,flare_erosion=
                  'POS_CORR1':detrender.data.unmasked_inputs[:,1],
                  'POS_CORR2':detrender.data.unmasked_inputs[:,2]
                  })
+
     # lc2 = lc.copy()
     # thismask = np.copy(detrender.data.mask)
 
@@ -849,8 +850,7 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
     for j in range(5):
         flux[j,:] = extract_lc(smear,starposes,background,
             widths[j],col=smear_type)
-        mm, ss = medsig(flux[j,:])
-        sigs[j] = ss/mm
+        sigs[j] = cdpp(bjd,flux[j,:])
 
     best_aperture = np.argmin(sigs)
 
@@ -941,7 +941,7 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
     for aperture in range(5):
         print 'Doing aperture', aperture
         dummy = lc.copy()
-        dummy['FLUX'] = flux[aperture,:]
+        dummy['FLUX'] = dummy['FLUX%d' % (aperture+1)]
 
         ### First do 4 CBVs
 
@@ -969,6 +969,7 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
         ### Now do 8 CBVs
 
         dummy = lc.copy()
+        dummy['FLUX'] = dummy['FLUX%d' % (aperture +1)]
         cbtime, cbcadence, cbraw_flux, flux_cbv8, cbweights = cbv.correct_smear(dummy, 
             cbvfile, name, quarter, mod,out, nB = 8, outfile = None, 
             exclude_func = None, exclude_func_par = None, doPlot = True)
@@ -997,17 +998,23 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
         lc['FLUX%d_CORR_4' % aperture] = flux_cbv4
         lc['FLUX%d_CORR_8' % aperture] = flux_cbv8
 
-    for j in range(5):
-        mm, ss = medsig(flux4s[j,:])
-        sigs[j] = ss/mm
-
-    best_aperture4 = np.argmin(sigs)
+    sigs4 = np.zeros(5)
+    sigs8 = np.zeros(5)
 
     for j in range(5):
-        mm, ss = medsig(flux8s[j,:])
-        sigs[j] = ss/mm
+        # mm, ss = medsig(flux4s[j,:])
+        sigs4[j] = cdpp(lc['BJD'],flux4s[j,:])#ss/mm
 
-    best_aperture8 = np.argmin(sigs)
+    best_aperture4 = np.argmin(sigs4)
+
+    for j in range(5):
+        # mm, ss = medsig(flux8s[j,:])
+        sigs8[j] = cdpp(lc['BJD'],flux8s[j,:])
+
+    best_aperture8 = np.argmin(sigs8)
+
+    print 'Best Aperture (4 CBVs):', best_aperture4
+    print 'Best Aperture (8 CBVs):', best_aperture8
 
     lc['FLUX_CORR_4'] = flux4s[best_aperture4]
     lc['FLUX_CORR_8'] = flux8s[best_aperture8]
@@ -1107,8 +1114,7 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
     for j in range(5):
         flux[j,:] = extract_lc(smear,starposes,background,
             widths[j],col=smear_type)
-        mm, ss = medsig(flux[j,:])
-        sigs[j] = ss/mm
+        sigs[j] = cdpp[bjd,flux[j,:]]
         if ~np.isfinite(sigs[j]):  
             sigs[j] = 1e10
 
