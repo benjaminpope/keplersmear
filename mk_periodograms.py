@@ -20,7 +20,7 @@ if __name__ == '__main__':
 	args = ap.parse_args()
 	ddir = args.ddir
 
-	stars = {re.search('%s(.+?)_smear_combined.csv' % ddir,star).group(1) for star in glob('%s*_smear_full.csv' % ddir)}
+	stars = {re.search('%s(.+?)_smear_combined.csv' % ddir,star).group(1) for star in glob('%s*_smear_combined.csv' % ddir)}
 	first = clock()
 
 	f = open('do_periodograms.txt','w')
