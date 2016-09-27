@@ -87,65 +87,65 @@ if __name__ == '__main__':
 
 	# now do low frequency bit
 
-	lspmin, lspmax = 24./24.,100
+	# lspmin, lspmax = 24./24.,100
 
-	freqs = np.linspace(1./lspmax, 1./lspmin, 18000)*2.*np.pi
+	# freqs = np.linspace(1./lspmax, 1./lspmin, 18000)*2.*np.pi
 
-	print 'Doing star %s low frequencies' % star.replace ("_", " ")
-	starttime = clock()
+	# print 'Doing star %s low frequencies' % star.replace ("_", " ")
+	# starttime = clock()
 
-	# read in data
-	try:
-		print 'Using combined'
-		data = Table.read('%s%s_smear_combined.csv' % (ddir,star))
-	except:
-		data = Table.read('%s%s_smear_full.csv' % (ddir,star))
-	good = data['QUARTER']!=0 # quarter 0 is no good
-	data = data[good]
+	# # read in data
+	# try:
+	# 	print 'Using combined'
+	# 	data = Table.read('%s%s_smear_combined.csv' % (ddir,star))
+	# except:
+	# 	data = Table.read('%s%s_smear_full.csv' % (ddir,star))
+	# good = data['QUARTER']!=0 # quarter 0 is no good
+	# data = data[good]
 
-	sigs = []
-	for q in range(17):
-		m = data['QUARTER'] == q
+	# sigs = []
+	# for q in range(17):
+	# 	m = data['QUARTER'] == q
 
-		med, sig = medsig(data['FLUX_CORR_4'][m])
+	# 	med, sig = medsig(data['FLUX_CORR_4'][m])
 
-		sigs.append(sig/med)
+	# 	sigs.append(sig/med)
 
-	sigs = np.array(sigs)
-	m2, s2 = medsig(sigs)
+	# sigs = np.array(sigs)
+	# m2, s2 = medsig(sigs)
 
-	for q in range(17):
-		if np.abs(m2-sigs[q]) > (2*s2):
-			m = data['QUARTER'] != q
-			data = data[m]
-			print 'Throwing away quarter', q
+	# for q in range(17):
+	# 	if np.abs(m2-sigs[q]) > (2*s2):
+	# 		m = data['QUARTER'] != q
+	# 		data = data[m]
+	# 		print 'Throwing away quarter', q
 
-	time, flux, corr_flux, filt, quarters = data['BJD'], data['FLUX'],\
-	 data['FLUX_CORR_4'], data['FILT'], data['QUARTER']
+	# time, flux, corr_flux, filt, quarters = data['BJD'], data['FLUX'],\
+	#  data['FLUX_CORR_4'], data['FILT'], data['QUARTER']
 
-	thesetimes = time
-	thesefluxes = corr_flux
+	# thesetimes = time
+	# thesefluxes = corr_flux
 
-	thesetimes = thesetimes[np.isfinite(thesefluxes)] 
-	thesefluxes = thesefluxes[np.isfinite(thesefluxes)]
+	# thesetimes = thesetimes[np.isfinite(thesefluxes)] 
+	# thesefluxes = thesefluxes[np.isfinite(thesefluxes)]
 
-	# do and plot a lomb-scargle periodogram
+	# # do and plot a lomb-scargle periodogram
 
-	lsp = my_lombscargle(thesetimes,thesefluxes,freqs)
+	# lsp = my_lombscargle(thesetimes,thesefluxes,freqs)
 
-	plt.clf()
-	plt.plot(freqs/2./np.pi*11.57,np.sqrt(lsp)*1e6,'k')
-	# plt.plot(1./(freqs/2./np.pi),(lsp/lsp.max()),'r')
+	# plt.clf()
+	# plt.plot(freqs/2./np.pi*11.57,np.sqrt(lsp)*1e6,'k')
+	# # plt.plot(1./(freqs/2./np.pi),(lsp/lsp.max()),'r')
 
-	fmax = (freqs/2./np.pi*11.57)[np.argmax(lsp)]
-	print 'Best period',1./fmax
-	print 'Best frequency',fmax
-	plt.xlabel(r'Frequency ($\mu$Hz)')
-	plt.ylabel('Amplitude (ppm)')
-	plt.title('Periodogram of %s Oscillations' % star.replace ("_", " "),y=1.02)
+	# fmax = (freqs/2./np.pi*11.57)[np.argmax(lsp)]
+	# print 'Best period',1./fmax
+	# print 'Best frequency',fmax
+	# plt.xlabel(r'Frequency ($\mu$Hz)')
+	# plt.ylabel('Amplitude (ppm)')
+	# plt.title('Periodogram of %s Oscillations' % star.replace ("_", " "),y=1.02)
 
-	plt.savefig('%s%s_periodogram_low.png' % (ddir,star))
-	print 'Saved periodogram to %s%s_periodogram_low.png' % (ddir,star)
+	# plt.savefig('%s%s_periodogram_low.png' % (ddir,star))
+	# print 'Saved periodogram to %s%s_periodogram_low.png' % (ddir,star)
 
 	# ### Do folded light curve
 	# print_time(clock()-starttime)
