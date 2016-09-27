@@ -82,7 +82,7 @@ if __name__ == '__main__':
 	plt.ylabel('Amplitude (ppm)')
 	plt.title('Periodogram of %s Oscillations' % star.replace ("_", " "),y=1.02)
 
-	plt.savefig('%s%s_periodogram_low.png' % (ddir,star))
+	plt.savefig('%s%s_periodogram.png' % (ddir,star))
 	print 'Saved periodogram to %s%s_periodogram.png' % (ddir,star)
 
 	# now do low frequency bit
