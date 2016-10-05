@@ -26,7 +26,7 @@ This is an evolving body of code with complicated dependencies. We are endeavour
 Citing
 ------
 
-If you use K2SC in your research, please cite
+If you use keplersmear in your research, please cite
 
 	Pope, B. J. S.; White, T. R.; Huber, D.; Murphy, S. J.; Bedding, T. R.; Caldwell, D. A.; Sarai, A.; Aigrain, S.; Barclay, T. (MNRAS, 2016), arXiv:1510.00008
 
