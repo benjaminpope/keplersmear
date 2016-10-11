@@ -1114,7 +1114,7 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
     for j in range(5):
         flux[j,:] = extract_lc(smear,starposes,background,
             widths[j],col=smear_type)
-        sigs[j] = cdpp[bjd,flux[j,:]]
+        sigs[j] = cdpp(bjd,flux[j,:])
         if ~np.isfinite(sigs[j]):  
             sigs[j] = 1e10
 
