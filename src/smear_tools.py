@@ -797,7 +797,7 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
     bjd[np.isfinite(smear['MJD'])] = mjd2bjd(mjd,ra,dec)
     t0 = np.nanmin(bjd)
 
-    print 'Corrected MJD to bjd'
+    print 'Corrected MJD to BJD'
 
     if do_plot:
         plt.clf()
@@ -1062,7 +1062,7 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
     bjd[np.isfinite(smear['MJD'])] = mjd2bjd(mjd,ra,dec)
     t0 = np.nanmin(bjd)
 
-    print 'Corrected MJD to bjd'
+    print 'Corrected MJD to BJD'
 
     if do_plot:
         plt.clf()
