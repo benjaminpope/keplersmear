@@ -277,12 +277,13 @@ def get_and_censor_background(smear,col=None,cutoff=25,
     raw_background = np.nanmedian(starflux[:,back_cols],axis=1)
     raw_background[raw_background<0.05*np.median(raw_background)] = np.nan
 
-    m = np.isfinite(raw_background)
+    m = np.isfinite(raw_background) & np.isfinite(smear['MJD'])
     background = np.copy(raw_background)
+    t0 = np.nanmin(smear['MJD'][m])
 
     background[m] = gaussian_filter1d(raw_background[m],17)#NIF(raw_background,250,11)
-    model = np.poly1d(np.polyfit(smear['MJD'][m],background[m],6))
-    background = model(smear['MJD'])
+    model = np.poly1d(np.polyfit(smear['MJD'][m]-t0,background[m],10))
+    background = model(smear['MJD']-t0)
 
     return background
 
@@ -726,7 +727,7 @@ def get_background(smear,col=None,cutoff=25):
 
     raw_background = np.nanmedian(starflux[:,back_cols],axis=1)
     raw_background[raw_background<0.05*np.median(raw_background)] = np.nan
-    m = np.isfinite(raw_background)
+    m = np.isfinite(raw_background) & np.isfinite(smear['MJD'])
     background = np.copy(raw_background)
 
     background[m] = gaussian_filter1d(raw_background[m],17)#NIF(raw_background,250,11)
