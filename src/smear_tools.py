@@ -236,7 +236,6 @@ def get_and_censor_background(smear,col=None,cutoff=25,
     low-flux columns'''
     bad_cads = Table.read(gap_file)
 
-
     try: # not all have bad cadences
         index = np.where(bad_cads['Quarter']==quarter)
         time = smear['MJD']
