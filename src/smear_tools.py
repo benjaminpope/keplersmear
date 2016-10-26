@@ -642,6 +642,17 @@ def get_centroid_series(smear,x0,x1,col=None):
 ###----------------------------------------------
 ###----------------------------------------------
 
+def get_pixels(smear,x0,x1):
+    '''Get the position of the star as a function of time'''
+
+    starflux = np.concatenate((smear['smear_flux'][:,x0:x1] + smear['vsmear_flux'][:,x0:x1]),
+        axis=1)
+
+    return Table(starflux)
+
+###----------------------------------------------
+###----------------------------------------------
+
 def get_background(smear,col=None,cutoff=25):
     '''Get the background flux as a function of time, by smoothing a mean of
     low-flux columns'''
@@ -1025,7 +1036,7 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
 ###----------------------------------------------
 
 def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
-    smear_type=None,do_plot=False):
+    smear_type=None,do_plot=False,do_pixels=False):
     
     tab = Table.read(cat_file)
     smear_name = lambda s: '' if s is None else str(s)
@@ -1079,6 +1090,10 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
     print '\nFitting star centroids'
 
     starposes = get_centroid_series(smear,col-5,col+5,col=smear_type)
+
+    if do_pixels:
+        pixels = get_pixels(smear,np.nanmedian(starposes)-5,np.nanmedian(starposes)+5)
+        pixels.write('%s%s_%d_pixels_%d%d.fits' % (out_dir,campaign,name,mod,out))
 
     if do_plot:
         plt.clf()

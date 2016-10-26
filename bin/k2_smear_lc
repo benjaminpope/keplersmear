@@ -28,6 +28,9 @@ if __name__ == '__main__':
 					help = 'produce plots')
 	ap.add_argument('--do-all', action = 'store_true', default = False, \
 					help = 'produce plots')
+	ap.add_argument('--do-pixels', action = 'store_true', default = False, \
+					help = 'store pixel time series')
+
 
 	args = ap.parse_args()
 
@@ -37,6 +40,7 @@ if __name__ == '__main__':
 	smear_type = args.smear_type
 	do_all = args.do_all
 	cat_file = args.cat_file
+	do_pixels = args.do_pixels
 
 	name = str(epic)
 	out_dir = '%s_smear/' % campaign
@@ -56,7 +60,7 @@ if __name__ == '__main__':
 		epic = str(epic)
 		try:
 			lc = do_target_k2(name,campaign,cat_file=cat_file,out_dir=out_dir,
-				smear_type=smear_type,do_plot=do_plot)
+				smear_type=smear_type,do_plot=do_plot,do_pixels=do_pixels)
 
 			lc.write('%s%s_%s_smear%s.fits' % (out_dir,campaign,epic,smear_name(smear_type)),
 				overwrite=True)
