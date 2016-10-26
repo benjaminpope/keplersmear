@@ -283,7 +283,7 @@ def get_and_censor_background(smear,col=None,cutoff=25,
     t0 = np.nanmin(smear['MJD'][m])
 
     # background[m] = gaussian_filter1d(raw_background[m],27)#NIF(raw_background,250,11)
-    background[m],berr,gpb = gpfilt_1(background[m],smear['MJD'][m]-t0,2)
+    background[m],berr,gpb = gpfilt_1(background[m],smear['MJD'][m]-t0,smear['MJD']-t0,2)
     # model = np.poly1d(np.polyfit(smear['MJD'][m]-t0,background[m],10))
     # background = model(smear['MJD']-t0)
 
@@ -741,7 +741,7 @@ def get_background(smear,col=None,cutoff=25):
 ###----------------------------------------------
 ###----------------------------------------------
 
-def gpfilt_1(flux,time,scale,yerr=0.01):
+def gpfilt_1(flux,time,timeout,scale,yerr=0.01):
     '''Do a 1D squared exponential GP fit'''
 
     keep = np.isfinite(flux)
@@ -752,7 +752,7 @@ def gpfilt_1(flux,time,scale,yerr=0.01):
     gp.compute(time[keep],yerr=yerr)
 
     # do a first prediction
-    ypred, ycov = gp.predict(flux[keep],time)
+    ypred, ycov = gp.predict(flux[keep],timeout)
     err_pred = np.sqrt(np.diag(ycov)+yerr**2)
 
     return ypred, err_pred, gp
