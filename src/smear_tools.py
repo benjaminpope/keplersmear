@@ -672,7 +672,9 @@ def get_background(smear,col=None,cutoff=25):
     m = np.isfinite(raw_background)
     background = np.copy(raw_background)
 
-    background[m] = gaussian_filter1d(raw_background[m],27)#NIF(raw_background,250,11)
+    background[m] = gaussian_filter1d(raw_background[m],17)#NIF(raw_background,250,11)
+    model = np.poly1d(np.polyfit(smear['time'][m],background[m],6))
+    background = model(smear['time'])
 
     return background
 
