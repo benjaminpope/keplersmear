@@ -16,6 +16,7 @@ from k2_run_specs import get_sc_coords
 from SuzPyUtils.norm import *
 from SuzPyUtils.multiplot import *
 from SuzPyUtils.filter import NIF
+from scipy.signal import savgol_filter
 
 import astropy
 import astropy.wcs
@@ -668,7 +669,7 @@ def get_background(smear,col=None,cutoff=25):
     raw_background = np.mean(starflux[:,back_cols],axis=1)
     raw_background[raw_background<0.05*np.median(raw_background)] = np.nan
 
-    background = NIF(raw_background,250,11)
+    background = savgol_filter(raw_background,7,5)#NIF(raw_background,250,11)
 
     return background
 
