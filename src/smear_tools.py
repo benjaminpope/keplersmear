@@ -276,7 +276,7 @@ def get_and_censor_background(smear,col=None,cutoff=25,
     back_cols = (mean_flux<np.percentile(mean_flux,cutoff))
 
     raw_background = np.nanmedian(starflux[:,back_cols],axis=1)
-    raw_background[raw_background<(0.05*np.median(raw_background))] = np.nan
+    raw_background[raw_background<(0.05*np.nanmedian(raw_background))] = np.nan
 
     m = np.isfinite(raw_background) & np.isfinite(smear['MJD'])
     background = np.copy(raw_background)
