@@ -62,8 +62,8 @@ def medsig(array):
         return np.nan, np.nan
     if sum(l) == 1:
         return array[l], np.nan
-    med = np.median(array[l])
-    sig = 1.48 * np.median(abs(array[l] - med))
+    med = np.nanmedian(array[l])
+    sig = 1.48 * np.nanmedian(abs(array[l] - med))
     return med, sig
 
 
@@ -354,7 +354,7 @@ def my_lombscargle(times,fluxes,freqs,norm=True):
     thesetimes, thesefluxes = np.copy(times[mask]).byteswap().newbyteorder().astype('float64'),\
      np.copy(fluxes[mask]).byteswap().newbyteorder().astype('float64')
 
-    medflux = np.median(thesefluxes)
+    medflux = np.nanmedian(thesefluxes)
     if medflux == 0:
         medflux = 1
 
@@ -727,7 +727,7 @@ def get_background(smear,col=None,cutoff=25):
     back_cols = (mean_flux<np.percentile(mean_flux,cutoff))
 
     raw_background = np.nanmedian(starflux[:,back_cols],axis=1)
-    raw_background[raw_background<0.05*np.median(raw_background)] = np.nan
+    raw_background[raw_background<0.05*np.nanmedian(raw_background)] = np.nan
     m = np.isfinite(raw_background) & np.isfinite(smear['MJD'])
     background = np.copy(raw_background)
 
