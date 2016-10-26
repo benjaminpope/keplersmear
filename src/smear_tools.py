@@ -229,6 +229,8 @@ def censor_bad_cads(lc,quarter,gap_file='kepler_bad_cads.csv'):
         print 'No bad cadences in list'
     return lc
 
+###----------------------------------------------
+###----------------------------------------------
 
 def get_and_censor_background(smear,col=None,cutoff=25,
     quarter=0,gap_file='kepler_bad_cads.csv'):
@@ -284,7 +286,7 @@ def get_and_censor_background(smear,col=None,cutoff=25,
     model = np.poly1d(np.polyfit(smear['MJD'][m]-t0,background[m],10))
     background = model(smear['MJD']-t0)
 
-    return background
+    return background,gaussian_filter1d(raw_background[m],17)
 
 ###----------------------------------------------
 ###----------------------------------------------
@@ -901,12 +903,13 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
     # get background flux 
     print '\nExtracting background flux'
 
-    background = get_and_censor_background(smear,col=None,cutoff=25,
+    background,raw_background = get_and_censor_background(smear,col=None,cutoff=25,
         quarter=quarter,gap_file=gap_file)
 
     if do_plot:
         plt.clf()
         plt.plot(bjd-t0,background)
+        plt.plot(bjd-t0,raw_background)
         plt.xlabel('BJD - %f' % t0)
         plt.ylabel('Flux (counts/pix)')
         plt.title('Background flux, mod.out %d.%d, Q%d' % (mod,out,quarter))
