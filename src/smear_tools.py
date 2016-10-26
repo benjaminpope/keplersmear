@@ -231,7 +231,7 @@ def censor_bad_cads(lc,quarter,gap_file='kepler_bad_cads.csv'):
 
 
 def get_and_censor_background(smear,col=None,cutoff=25,
-    quarter,gap_file='kepler_bad_cads.csv'):
+    quarter=0,gap_file='kepler_bad_cads.csv'):
     '''Get the background flux as a function of time, by smoothing a mean of
     low-flux columns'''
     bad_cads = Table.read(gap_file)
@@ -902,7 +902,7 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
     print '\nExtracting background flux'
 
     background = get_and_censor_background(smear,col=None,cutoff=25,
-        quarter,gap_file=gap_file)
+        quarter=quarter,gap_file=gap_file)
 
     if do_plot:
         plt.clf()
