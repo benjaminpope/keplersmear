@@ -283,7 +283,7 @@ def get_and_censor_background(smear,col=None,cutoff=25,
     t0 = np.nanmin(smear['MJD'][m])
 
     # background[m] = gaussian_filter1d(raw_background[m],27)#NIF(raw_background,250,11)
-    background[m] = gpfilt_iter(smear['MJD'][m]-t0,background[m],2)
+    background[m],berr,gpb = gpfilt_1(background[m],smear['MJD'][m]-t0,2)
     # model = np.poly1d(np.polyfit(smear['MJD'][m]-t0,background[m],10))
     # background = model(smear['MJD']-t0)
 
