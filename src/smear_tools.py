@@ -282,7 +282,8 @@ def get_and_censor_background(smear,col=None,cutoff=25,
     background = np.copy(raw_background)
     t0 = np.nanmin(smear['MJD'][m])
 
-    background[m] = gaussian_filter1d(raw_background[m],27)#NIF(raw_background,250,11)
+    # background[m] = gaussian_filter1d(raw_background[m],27)#NIF(raw_background,250,11)
+    background[m] = gpfilt_iter(smear['MJD'][m]-t0,background[m],2)
     # model = np.poly1d(np.polyfit(smear['MJD'][m]-t0,background[m],10))
     # background = model(smear['MJD']-t0)
 
@@ -908,8 +909,8 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
 
     if do_plot:
         plt.clf()
-        plt.plot(bjd-t0,background)
         plt.plot(bjd-t0,raw_background)
+        plt.plot(bjd-t0,background)
         plt.xlabel('BJD - %f' % t0)
         plt.ylabel('Flux (counts/pix)')
         plt.title('Background flux, mod.out %d.%d, Q%d' % (mod,out,quarter))
