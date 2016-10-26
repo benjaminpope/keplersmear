@@ -1093,7 +1093,7 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
 
     if do_pixels:
         pixels = get_pixels(smear,np.nanmedian(starposes)-5,np.nanmedian(starposes)+5)
-        pixels.write('%s%s_%s_pixels_%d%d.fits' % (out_dir,campaign,name,mod,out))
+        pixels.write('%s%s_%s_pixels_%d%d.fits' % (out_dir,campaign,name,mod,out),overwrite=True)
         print '%d Pixels saved to %s%s_%s_pixels_%d%d.fits' % (len(pixels.keys()),out_dir,campaign,name,mod,out)
 
     if do_plot:
