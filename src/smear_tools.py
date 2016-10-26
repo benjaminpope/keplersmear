@@ -229,6 +229,63 @@ def censor_bad_cads(lc,quarter,gap_file='kepler_bad_cads.csv'):
         print 'No bad cadences in list'
     return lc
 
+
+def get_and_censor_background(smear,col=None,cutoff=25,
+    quarter,gap_file='kepler_bad_cads.csv'):
+    '''Get the background flux as a function of time, by smoothing a mean of
+    low-flux columns'''
+    bad_cads = Table.read(gap_file)
+
+
+    try: # not all have bad cadences
+        index = np.where(bad_cads['Quarter']==quarter)
+        time = smear['MJD']
+        start, stop = float(bad_cads['Start'][index]),float(bad_cads['Stop'][index])
+        bad = np.where((time>=start) & (time<=stop))
+        print '\nCensoring data between',start, stop
+
+        if quarter == 11: # there are two jumps!
+            print 'Censoring additional cadences'
+            also_bad = np.where((time >= 55926) & (time <=55926.5))
+            other_bad = np.where((time >= 55929.3) & (time <=55929.6)) 
+            bad = np.concatenate((bad[0],also_bad[0],other_bad[0]))
+            # bad = np.concatenate((bad[0],other_bad[0]))
+
+        if quarter == 12: # there are two jumps!
+            print 'Censoring additional cadences'
+            also_bad = np.where((time >= 55948) & (time <=55952))
+            other_bad = np.where((time >= 55953) & (time <=55956)) 
+            bad = np.concatenate((bad[0],also_bad[0],other_bad[0]))
+            # bad = np.concatenate((bad[0],other_bad[0]))
+
+        for key in smear.keys():
+            if 'flux' in key:
+                smear[key][bad] = np.nan
+        print 'Censored %s bad cadences' % np.size(bad)
+
+    except:
+        print 'No bad cadences in list'
+
+    if col is not None:
+        starflux = smear[col]
+    else:
+        starflux = smear['smear_flux'] + smear['vsmear_flux']
+
+    mean_flux = np.nanmedian(starflux,axis=0)
+    back_cols = (mean_flux<np.percentile(mean_flux,cutoff))
+
+    raw_background = np.nanmedian(starflux[:,back_cols],axis=1)
+    raw_background[raw_background<0.05*np.median(raw_background)] = np.nan
+
+    m = np.isfinite(raw_background)
+    background = np.copy(raw_background)
+
+    background[m] = gaussian_filter1d(raw_background[m],17)#NIF(raw_background,250,11)
+    model = np.poly1d(np.polyfit(smear['MJD'][m],background[m],6))
+    background = model(smear['MJD'])
+
+    return background
+
 ###----------------------------------------------
 ###----------------------------------------------
 
@@ -664,10 +721,10 @@ def get_background(smear,col=None,cutoff=25):
     else:
         starflux = smear['smear_flux'] + smear['vsmear_flux']
 
-    mean_flux = np.mean(starflux,axis=0)
+    mean_flux = np.nanmedian(starflux,axis=0)
     back_cols = (mean_flux<np.percentile(mean_flux,cutoff))
 
-    raw_background = np.mean(starflux[:,back_cols],axis=1)
+    raw_background = np.nanmedian(starflux[:,back_cols],axis=1)
     raw_background[raw_background<0.05*np.median(raw_background)] = np.nan
     m = np.isfinite(raw_background)
     background = np.copy(raw_background)
@@ -844,7 +901,8 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
     # get background flux 
     print '\nExtracting background flux'
 
-    background = get_background(smear,col=smear_type)
+    background = get_and_censor_background(smear,col=None,cutoff=25,
+        quarter,gap_file=gap_file)
 
     if do_plot:
         plt.clf()
