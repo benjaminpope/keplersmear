@@ -17,6 +17,7 @@ from SuzPyUtils.norm import *
 from SuzPyUtils.multiplot import *
 from SuzPyUtils.filter import NIF
 from scipy.signal import savgol_filter
+from scipy.ndimage import gaussian_filter1d
 
 import astropy
 import astropy.wcs
@@ -668,8 +669,10 @@ def get_background(smear,col=None,cutoff=25):
 
     raw_background = np.mean(starflux[:,back_cols],axis=1)
     raw_background[raw_background<0.05*np.median(raw_background)] = np.nan
+    m = np.isfinite(raw_background)
+    background = np.copy(raw_background)
 
-    background = savgol_filter(raw_background,27,7)#NIF(raw_background,250,11)
+    background[m] = gaussian_filter(raw_background[m],27)#NIF(raw_background,250,11)
 
     return background
 
