@@ -31,7 +31,6 @@ if __name__ == '__main__':
 	ap.add_argument('--do-pixels', action = 'store_true', default = False, \
 					help = 'store pixel time series')
 
-
 	args = ap.parse_args()
 
 	campaign = args.campaign
@@ -57,7 +56,7 @@ if __name__ == '__main__':
 	starttime = clock()
 
 	for epic in epics:
-		epic = str(epic)
+		name = str(epic)
 		try:
 			lc = do_target_k2(name,campaign,cat_file=cat_file,out_dir=out_dir,
 				smear_type=smear_type,do_plot=do_plot,do_pixels=do_pixels)
