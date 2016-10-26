@@ -286,7 +286,7 @@ def get_and_censor_background(smear,col=None,cutoff=25,
     model = np.poly1d(np.polyfit(smear['MJD'][m]-t0,background[m],10))
     background = model(smear['MJD']-t0)
 
-    return background,gaussian_filter1d(raw_background[m],17)
+    return background,raw_background
 
 ###----------------------------------------------
 ###----------------------------------------------
