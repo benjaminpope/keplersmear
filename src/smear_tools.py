@@ -737,9 +737,15 @@ def get_background(smear,col=None,cutoff=25):
     m = np.isfinite(raw_background) & np.isfinite(smear['MJD'])
     background = np.copy(raw_background)
 
-    background[m] = gaussian_filter1d(raw_background[m],17)#NIF(raw_background,250,11)
-    model = np.poly1d(np.polyfit(smear['MJD'][m],background[m],6))
-    background = model(smear['MJD'])
+    # background[m] = gaussian_filter1d(raw_background[m],17)#NIF(raw_background,250,11)
+    # model = np.poly1d(np.polyfit(smear['MJD'][m],background[m],6))
+    # background = model(smear['MJD'])
+
+
+    t0 = np.nanmin(smear['MJD'][m])
+
+    # background[m] = gaussian_filter1d(raw_background[m],27)#NIF(raw_background,250,11)
+    background[m],berr,gpb = gpfilt_1(background[m],smear['MJD'][m]-t0,30)
 
     return background
 
