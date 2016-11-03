@@ -624,8 +624,13 @@ def load_smear(smear_file):
     '''Return a dictionary containing the smear data and times'''
     f = fitsio.FITS(smear_file,'r')
 
-    smear_flux = f[5]['SMEAR_FLUX'][:]+f[5]['SMEAR_CR'][:]
-    vsmear_flux = f[3]['VSMEAR_FLUX'][:]+f[3]['VSMEAR_CR'][:]
+    mcr = f[5]['SMEAR_CR'][:]
+    mcr[~np.isfinite(mcr)] = 0
+    vcr = f[3]['VSMEAR_CR'][:]
+    vcr[~np.isfinite(vcr)] = 0
+
+    smear_flux = f[5]['SMEAR_FLUX'][:]+mcr
+    vsmear_flux = f[3]['VSMEAR_FLUX'][:]+vcr
     time = f[5]['TIME_MJD'][:]
     cads = f[3]['CADENCENO'][:]
 
