@@ -68,18 +68,18 @@ if __name__ == '__main__':
 
 		for smear_type in smear_types:
 
-			try:
-				lc = do_target_k2(name,campaign,cat_file=cat_file,out_dir=out_dir,
-					smear_type=smear_type,do_plot=do_plot,do_pixels=do_pixels)
+			# try:
+			lc = do_target_k2(name,campaign,cat_file=cat_file,out_dir=out_dir,
+				smear_type=smear_type,do_plot=do_plot,do_pixels=do_pixels)
 
-				lc.write('%s%s_%s_smear%s.fits' % (out_dir,campaign,epic,smear_name(smear_type)),
-					overwrite=True)
-				lc.write('%s%s_%s_smear%s.csv' % (out_dir,campaign,epic,smear_name(smear_type)))
+			lc.write('%s%s_%s_smear%s.fits' % (out_dir,campaign,epic,smear_name(smear_type)),
+				overwrite=True)
+			lc.write('%s%s_%s_smear%s.csv' % (out_dir,campaign,epic,smear_name(smear_type)))
 
-				print '\nSaved to %s%s_%s_smear%s.csv' % (out_dir,campaign,epic,smear_name(smear_type))
-				print '\nSaved to %s%s_%s_smear%s.fits too!' % (out_dir,campaign,epic,smear_name(smear_type))
-			except:
-				print '\nFailed on EPIC %s' % epic
+			print '\nSaved to %s%s_%s_smear%s.csv' % (out_dir,campaign,epic,smear_name(smear_type))
+			print '\nSaved to %s%s_%s_smear%s.fits too!' % (out_dir,campaign,epic,smear_name(smear_type))
+			# except:
+			# 	print '\nFailed on EPIC %s' % epic
 
 		if args.combine:
 			print 'Optimally combining both smear registers'
