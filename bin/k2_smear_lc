@@ -22,7 +22,7 @@ if __name__ == '__main__':
 	ap.add_argument('epic', type = str, help = 'star name to save')
 	ap.add_argument('--campaign', type = str, default='C05',help = 'campaign')
 	ap.add_argument('--cat-file', type = str, default='C05_smear.csv',help = 'campaign list')
-	ap.add_argument('--smear-type', type = str, default = None, \
+	ap.add_argument('--smear-type', type = str, default = 'both', \
 					help = 'which smear to use')
 	ap.add_argument('--do-plot', action = 'store_true', default = False, \
 					help = 'produce plots')
@@ -30,13 +30,15 @@ if __name__ == '__main__':
 					help = 'produce plots')
 	ap.add_argument('--do-pixels', action = 'store_true', default = False, \
 					help = 'store pixel time series')
+	ap.add_argument('--combine',action='store_true', default = False, \
+					help='Try to optimally combine')
+
 
 	args = ap.parse_args()
 
 	campaign = args.campaign
 	epic = args.epic
 	do_plot = args.do_plot 
-	smear_type = args.smear_type
 	do_all = args.do_all
 	cat_file = args.cat_file
 	do_pixels = args.do_pixels
@@ -55,19 +57,36 @@ if __name__ == '__main__':
 
 	starttime = clock()
 
-	for epic in epics:
+	if args.smear_type == 'both':
+		smear_types = ['vsmear_flux','smear_flux']
+	else:
+		smear_types = [args.smear_type]
+
+	for epic in epics:	
+		
 		name = str(epic)
-		try:
-			lc = do_target_k2(name,campaign,cat_file=cat_file,out_dir=out_dir,
-				smear_type=smear_type,do_plot=do_plot,do_pixels=do_pixels)
 
-			lc.write('%s%s_%s_smear%s.fits' % (out_dir,campaign,epic,smear_name(smear_type)),
-				overwrite=True)
-			lc.write('%s%s_%s_smear%s.csv' % (out_dir,campaign,epic,smear_name(smear_type)))
+		for smear_type in smear_types:
 
-			print '\nSaved to %s%s_%s_smear%s.csv' % (out_dir,campaign,epic,smear_name(smear_type))
-			print '\nSaved to %s%s_%s_smear%s.fits too!' % (out_dir,campaign,epic,smear_name(smear_type))
-		except:
-			print '\nFailed on EPIC %s' % epic
+			try:
+				lc = do_target_k2(name,campaign,cat_file=cat_file,out_dir=out_dir,
+					smear_type=smear_type,do_plot=do_plot,do_pixels=do_pixels)
+
+				lc.write('%s%s_%s_smear%s.fits' % (out_dir,campaign,epic,smear_name(smear_type)),
+					overwrite=True)
+				lc.write('%s%s_%s_smear%s.csv' % (out_dir,campaign,epic,smear_name(smear_type)))
+
+				print '\nSaved to %s%s_%s_smear%s.csv' % (out_dir,campaign,epic,smear_name(smear_type))
+				print '\nSaved to %s%s_%s_smear%s.fits too!' % (out_dir,campaign,epic,smear_name(smear_type))
+			except:
+				print '\nFailed on EPIC %s' % epic
+
+		if combine:
+			print 'Optimally combining both smear registers'
+			for epic in epics:
+				bestlc = combine_k2(out_dir,name,do_plot=do_plot,thresh=thresh)
+				bestlc.write('%s%s_smear_combined.csv' % (out_dir,name))
+				bestlc.write('%s%s_smear_combined.fits' % (out_dir,name))
+
 
 	print_time(clock()-starttime)

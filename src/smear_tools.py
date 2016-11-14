@@ -232,6 +232,27 @@ def censor_bad_cads(lc,quarter,gap_file='kepler_bad_cads.csv'):
 ###----------------------------------------------
 ###----------------------------------------------
 
+def censor_bad_cads_k2(lc,campaign,gap_file='k2_bad_cads.csv'):
+    bad_cads = Table.read(gap_file)
+    try: # not all have bad cadences
+        index = np.where(bad_cads['Campaign']==campaign)
+        time = lc['BJD']
+        start, stop = float(bad_cads['Start'][index]),float(bad_cads['Stop'][index])
+        bad = np.where((time>=start) & (time<=stop))
+        print '\nCensoring data between',start, stop
+
+        for key in lc.keys():
+            if 'FLUX' in key:
+                lc[key][bad] = np.nan
+        print 'Censored %s bad cadences' % np.size(bad)
+
+    except:
+        print 'No bad cadences in list'
+    return lc
+
+###----------------------------------------------
+###----------------------------------------------
+
 def get_and_censor_background(smear,col=None,cutoff=25,
     quarter=0,gap_file='kepler_bad_cads.csv'):
     '''Get the background flux as a function of time, by smoothing a mean of
@@ -848,7 +869,7 @@ def extract_lc(smear,starposes,background,width,col=None):
 
 def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/',
     cbvdir = '/kepler/kepler/FITS/',smear_type=None,do_plot=False,
-    gap_file = '/users/popeb/K2LC/ben/kepler_bad_cads.csv',sig_clip=True):
+    gap_file = '/users/popeb/keplersmear/kepler_bad_cads.csv',sig_clip=True):
     
     tab = Table.read(cat_file)
     smear_name = lambda s: '' if s is None else str(s)
@@ -1115,7 +1136,8 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
 ###----------------------------------------------
 
 def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
-    smear_type=None,do_plot=False,do_pixels=False):
+    smear_type=None,do_plot=False,do_pixels=False,
+    gap_file='/users/popeb/keplersmear/k2_bad_cads.csv'):
     
     tab = Table.read(cat_file)
     smear_name = lambda s: '' if s is None else str(s)
@@ -1207,11 +1229,14 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
     sigs = np.zeros(5)
 
     for j in range(5):
-        flux[j,:] = extract_lc(smear,starposes,background,
-            widths[j],col=smear_type)
-        sigs[j] = cdpp(bjd,flux[j,:])
-        if ~np.isfinite(sigs[j]):  
-            sigs[j] = 1e10
+        try:
+            flux[j,:] = extract_lc(smear,starposes,background,
+                widths[j],col=smear_type)
+            sigs[j] = cdpp(bjd,flux[j,:])
+            if ~np.isfinite(sigs[j]):  
+                sigs[j] = 1e10
+        except:
+            pass
 
     best_aperture = np.argmin(sigs)
 
@@ -1275,6 +1300,28 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
                 'BACKGROUND':background,
                 'STARPOS':starposes,
                 })
+
+    # censor bad cadences
+    # for bit in [20,21]:
+    #     bad = (quality & (2**bit)) == (2**bit)
+
+    #     for key in lc.keys():
+    #         if 'FLUX' in key:
+    #             lc[key][bad] = np.nan         
+
+    censoredlc = censor_bad_cads_k2(lc,campaign,gap_file=gap_file)
+
+    if do_plot:
+        plt.clf()
+        plt.plot(lc['BJD'],lc['FLUX'],'.r')
+        plt.plot(censoredlc['BJD'],censoredlc['FLUX'],'.k')
+        plt.xlabel('BJD')
+        plt.ylabel('FLUX')
+        plt.title('')
+        plt.savefig('%slc_bads_%s.png' % (out_dir,name))
+        print 'Saved corrected light curve to %slc_bads_%s.png' % (out_dir,name)
+
+    lc = censoredlc.copy()
 
     return lc 
 
@@ -1417,4 +1464,34 @@ def stitch_combine(out_dir,name,do_plot=True,thresh=2.5):
         except:
             pass
 
+    return dummy 
+
+def combine_k2(out_dir,name,do_plot=True,thresh=2.5):
+    ''' you can tell the provenance by the new column SMEAR_TYPE which is 2 for both,
+    0 for masked, 1 for virtual'''
+
+    lc_masked = Table.read('%s/masked/EPIC_%s_mast.fits' % (out_dir,name))
+    lc_virtual = Table.read('%s/virtual/EPIC_%s_mast.fits' % (out_dir,name))
+    lc_tot = Table.read('%s%s_mast.fits' % (out_dir,name))
+
+    lc_masked['SMEAR_TYPE'] = np.zeros_like(lc_masked['flux'])
+    lc_virtual['SMEAR_TYPE'] = np.ones_like(lc_virtual['flux'])
+
+    mcorrflux = lc_masked['flux'] - lc_masked['trposi'] + np.nanmedian(lc_masked['trposi'])
+    vcorrflux = lc_virtual['flux'] - lc_virtual['trposi'] + np.nanmedian(lc_virtual['trposi'])
+    
+    mcorrflux -= lc_masked['trtime'] - np.nanmedian(lc_masked['trtime'])
+    vcorrflux -= lc_virtual['trtime'] - np.nanmedian(lc_virtual['trtime'])
+
+    mmed, msig = medsig(mcorrflux)
+    vmed, vsig = medsig(vcorrflux)
+
+
+    if (msig/mmed) > 2.5 * (vsig/vmed):
+        return lc_virtual
+    elif (vsig/vmed) > 2.5 * (msig/mmed):
+        return lc_masked
+    else:
+        return lc_tot
+        
     return dummy 
