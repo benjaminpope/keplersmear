@@ -32,6 +32,8 @@ if __name__ == '__main__':
 					help = 'store pixel time series')
 	ap.add_argument('--combine',action='store_true', default = False, \
 					help='Try to optimally combine')
+	ap.add_argument('--just-combine',action='store_true', default = False, \
+					help='Do not recalculate, just combine')
 
 
 	args = ap.parse_args()
@@ -42,10 +44,12 @@ if __name__ == '__main__':
 	do_all = args.do_all
 	cat_file = args.cat_file
 	do_pixels = args.do_pixels
+	combine = args.combine
+	if args.just_combine:
+		combine = True # override
 
 	name = str(epic)
 	out_dir = '%s_smear/' % campaign
-
 
 	if do_all:
 		tab = Table.read(cat_file)
@@ -65,23 +69,22 @@ if __name__ == '__main__':
 	for epic in epics:	
 
 		name = str(epic)
+		if not args.just_combine:
+			for smear_type in smear_types:
+				try:
+					lc = do_target_k2(name,campaign,cat_file=cat_file,out_dir=out_dir,
+						smear_type=smear_type,do_plot=do_plot,do_pixels=do_pixels)
 
-		for smear_type in smear_types:
+					lc.write('%s%s_%s_smear%s.fits' % (out_dir,campaign,epic,smear_name(smear_type)),
+						overwrite=True)
+					lc.write('%s%s_%s_smear%s.csv' % (out_dir,campaign,epic,smear_name(smear_type)))
 
-			try:
-				lc = do_target_k2(name,campaign,cat_file=cat_file,out_dir=out_dir,
-					smear_type=smear_type,do_plot=do_plot,do_pixels=do_pixels)
+					print '\nSaved to %s%s_%s_smear%s.csv' % (out_dir,campaign,epic,smear_name(smear_type))
+					print '\nSaved to %s%s_%s_smear%s.fits too!' % (out_dir,campaign,epic,smear_name(smear_type))
+				except:
+					print '\nFailed on EPIC %s' % epic
 
-				lc.write('%s%s_%s_smear%s.fits' % (out_dir,campaign,epic,smear_name(smear_type)),
-					overwrite=True)
-				lc.write('%s%s_%s_smear%s.csv' % (out_dir,campaign,epic,smear_name(smear_type)))
-
-				print '\nSaved to %s%s_%s_smear%s.csv' % (out_dir,campaign,epic,smear_name(smear_type))
-				print '\nSaved to %s%s_%s_smear%s.fits too!' % (out_dir,campaign,epic,smear_name(smear_type))
-			except:
-				print '\nFailed on EPIC %s' % epic
-
-		if args.combine:
+		if combine:
 			print 'Optimally combining both smear registers'
 			for epic in epics:
 				bestlc = combine_k2(out_dir,name,do_plot=do_plot,thresh=thresh)

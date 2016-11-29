@@ -1470,6 +1470,37 @@ def combine_k2(out_dir,name,do_plot=True,thresh=2.5):
     ''' you can tell the provenance by the new column SMEAR_TYPE which is 2 for both,
     0 for masked, 1 for virtual'''
 
+    lc_masked = Table.read('%s%s_%s_smear%s.csv' % (out_dir,campaign,epic,'smear_flux'))
+    lc_virtual = Table.read('%s%s_%s_smear%s.csv' % (out_dir,campaign,epic,'vsmear_flux'))
+    lc_tot = lc_masked.copy()
+
+    for key in lc_masked.keys():
+        if 'FLUX' in key:
+            lc_tot[key] = lc_masked[key] + lc_virtual[key]
+
+    mflux = lc_masked['FLUX'] 
+    vflux = lc_virtual['FLUX']
+    
+    mmed, msig = medsig(mflux)
+    vmed, vsig = medsig(vflux)
+
+
+    if (msig/mmed) > 2.5 * (vsig/vmed):
+        print 'Only using virtual'
+        return lc_virtual
+    elif (vsig/vmed) > 2.5 * (msig/mmed):
+        print 'Only using masked'
+        return lc_masked
+    else:
+        print 'Using both smear registers'
+        return lc_tot
+        
+    return dummy 
+
+def combine_k2_detrended(out_dir,name,do_plot=True,thresh=2.5):
+    ''' you can tell the provenance by the new column SMEAR_TYPE which is 2 for both,
+    0 for masked, 1 for virtual'''
+
     lc_masked = Table.read('%s/masked/EPIC_%s_mast.fits' % (out_dir,name))
     lc_virtual = Table.read('%s/virtual/EPIC_%s_mast.fits' % (out_dir,name))
     lc_tot = Table.read('%s%s_mast.fits' % (out_dir,name))
