@@ -85,12 +85,10 @@ if __name__ == '__main__':
 					print '\nFailed on EPIC %s' % epic
 
 		if combine:
-			print 'Optimally combining both smear registers'
-			for epic in epics:
-				bestlc = combine_k2(out_dir,campaign,name,do_plot=do_plot)
-				bestlc.write('%s%s_%s_smear_combined.csv' % (out_dir,campaign,name))
-				bestlc.write('%s%s_%s_smear_combined.fits' % (out_dir,campaign,name),
-					overwrite=True)
+			bestlc = combine_k2(out_dir,campaign,name,do_plot=do_plot)
+			bestlc.write('%s%s_%s_smear_combined.csv' % (out_dir,campaign,name))
+			bestlc.write('%s%s_%s_smear_combined.fits' % (out_dir,campaign,name),
+				overwrite=True)
 
 
 	print_time(clock()-starttime)
