@@ -1466,7 +1466,7 @@ def stitch_combine(out_dir,name,do_plot=True,thresh=2.5):
 
     return dummy 
 
-def combine_k2(out_dir,name,do_plot=True,thresh=2.5):
+def combine_k2(out_dir,campaign,epic,do_plot=True,thresh=2.5):
     ''' you can tell the provenance by the new column SMEAR_TYPE which is 2 for both,
     0 for masked, 1 for virtual'''
 
