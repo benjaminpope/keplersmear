@@ -1313,8 +1313,8 @@ def do_target_k2(name,campaign,cat_file='k2_inputs.csv',out_dir = 'k2_smear/',
 
     if do_plot:
         plt.clf()
-        plt.plot(lc['BJD'],lc['FLUX'],'.r')
-        plt.plot(censoredlc['BJD'],censoredlc['FLUX'],'.k')
+        plt.plot(lc['BJD'],lc['SAP_FLUX'],'.r')
+        plt.plot(censoredlc['BJD'],censoredlc['SAP_FLUX'],'.k')
         plt.xlabel('BJD')
         plt.ylabel('FLUX')
         plt.title('')
