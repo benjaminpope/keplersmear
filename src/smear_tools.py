@@ -1478,8 +1478,8 @@ def combine_k2(out_dir,campaign,epic,do_plot=True,thresh=2.5):
         if 'FLUX' in key:
             lc_tot[key] = lc_masked[key] + lc_virtual[key]
 
-    mflux = lc_masked['FLUX'] 
-    vflux = lc_virtual['FLUX']
+    mflux = lc_masked['SAP_FLUX'] 
+    vflux = lc_virtual['SAP_FLUX']
     
     mmed, msig = medsig(mflux)
     vmed, vsig = medsig(vflux)
