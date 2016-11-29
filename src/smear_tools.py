@@ -1486,13 +1486,13 @@ def combine_k2(out_dir,campaign,epic,do_plot=True,thresh=2.5):
 
 
     if (msig/mmed) > 2.5 * (vsig/vmed):
-        print '%d: Only using virtual' % epic
+        print '%s: Only using virtual' % epic
         return lc_virtual
     elif (vsig/vmed) > 2.5 * (msig/mmed):
-        print '%d: Only using masked' % epic
+        print '%s: Only using masked' % epic
         return lc_masked
     else:
-        print '%d:Using both smear registers' % epic
+        print '%s:Using both smear registers' % epic
         return lc_tot
 
 def combine_k2_detrended(out_dir,name,do_plot=True,thresh=2.5):
