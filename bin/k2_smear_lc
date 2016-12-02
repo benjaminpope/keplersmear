@@ -85,10 +85,13 @@ if __name__ == '__main__':
 					print '\nFailed on EPIC %s' % epic
 
 		if combine:
-			bestlc = combine_k2(out_dir,campaign,name,do_plot=do_plot)
-			bestlc.write('%s%s_%s_smear_combined.csv' % (out_dir,campaign,name))
-			bestlc.write('%s%s_%s_smear_combined.fits' % (out_dir,campaign,name),
-				overwrite=True)
+			try:
+				bestlc = combine_k2(out_dir,campaign,name,do_plot=do_plot)
+				bestlc.write('%s%s_%s_smear_combined.csv' % (out_dir,campaign,name))
+				bestlc.write('%s%s_%s_smear_combined.fits' % (out_dir,campaign,name),
+					overwrite=True)
+			except:
+				print 'Failed to combine data for %s' % name
 
 
 	print_time(clock()-starttime)
