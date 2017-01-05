@@ -134,7 +134,7 @@ def my_MASTRADec(ra,dec,darcsec=1200.,tel='k2',quarter=None):
     lines = urllib.urlopen(url)
     for line in lines:
         line = line.strip()
-        if (len(line) > 0 and 
+        if (len(line) > 0 and 'not' not in line and 
             'Kepler' not in line and 
             'integer' not in line and
             'no rows found' not in line):
