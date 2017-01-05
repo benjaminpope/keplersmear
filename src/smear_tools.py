@@ -21,7 +21,6 @@ from scipy.ndimage import gaussian_filter1d
 
 import astropy
 import astropy.wcs
-from k2_epd_george import print_time
 from astropy.coordinates import SkyCoord, ICRS 
 from astropy.wcs.utils import skycoord_to_pixel
 import astropy.coordinates as coords
@@ -44,6 +43,18 @@ from my_kepffi import sex2dec
 from kepsys import cbv
 from k2sc.cdpp import cdpp
 
+
+# =========================================================================
+# =========================================================================
+
+def print_time(t):
+        if t>3600:
+            print 'Time taken: %d h %d m %3f s'\
+            % (np.int(np.floor(t/3600)), np.int(np.floor(np.mod(t,3600)/60)),np.mod(t,60))
+        elif t>60:
+            print 'Time taken: %d m %3f s' % (np.int(np.floor(np.mod(t,3600)/60)),np.mod(t,60) )
+        else:
+            print 'Time taken: %3f s' % t
 
 def centroid(thisflux,thispos):
     return np.sum(thisflux*thispos)/np.sum(thisflux)
@@ -634,7 +645,11 @@ def get_smear_file(quarter,mod,out,ddir='/kepler/kepler/smear/'):
 ###----------------------------------------------
 
 def get_smear_file_k2(campaign,mod,out,ddir='/kepler/kepler2/K2/'):
-    fname = '%sC%02d/collateral/ktwo%02d%1d-c%02d_coll.fits' % (ddir,int(campaign),mod,out,int(campaign))
+    if campaign == 10:
+        fname = '%sC%02d/collateral/ktwo%02d%1d-c102_coll.fits' % (ddir,int(campaign),mod,out) # half quarter
+    else:
+        fname = '%sC%02d/collateral/ktwo%02d%1d-c%02d_coll.fits' % (ddir,int(campaign),mod,out,int(campaign))
+
 
     return fname 
 
