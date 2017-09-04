@@ -44,7 +44,7 @@ def MAST_EPIC(id):
 
     url  = 'http://archive.stsci.edu/k2/epic/search.php?'
     url += 'action=Search'
-    url += '&id=' + id
+    url += '&ktc_k2_id=' + id
     url += '&max_records=100'
     url += '&verb=3'
     url += '&outputformat=CSV'
