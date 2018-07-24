@@ -1,4 +1,4 @@
-import pylab, numpy, pyfits
+import pylab, numpy
 import os
 from pylab import *
 from matplotlib import *
