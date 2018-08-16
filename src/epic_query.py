@@ -9,7 +9,6 @@ import wget
 from PIL import Image
 
 from astroquery.simbad import Simbad 
-from astroquery.skyview import SkyView
 from astropy.table import Table
 
 skygroup = ''; channel = ''; module = ''; output = ''; column = ''; row = ''
@@ -18,6 +17,8 @@ def simbad_search(ra,dec):
     return Simbad.query_region(ra+' '+dec)
 
 def get_postage_stamp_jpeg(epic,ra,dec,surveys=['DSS2 Red','DSS2 Blue', 'DSS2 IR']):
+    from astroquery.skyview import SkyView
+
     path = SkyView.get_images(position=ra+' '+dec,survey=surveys)
 
     sz = path[0][0].data.shape[0]
