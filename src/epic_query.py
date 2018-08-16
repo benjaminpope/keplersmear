@@ -1,9 +1,9 @@
-import pylab, numpy, pyfits
+import pylab, numpy
 import os
 from pylab import *
 from matplotlib import *
 from numpy import *
-import sys, urllib, time, re
+import sys, urllib, time, re, json
 import fitsio
 import wget
 from PIL import Image
@@ -42,51 +42,55 @@ def MAST_EPIC(id):
     
 # build mast query
 
-    url  = 'http://archive.stsci.edu/k2/epic/search.php?'
+    url  = 'http://archive.stsci.edu/k2/data_search/search.php?'
     url += 'action=Search'
-    url += '&id=' + id
+    url += '&ktc_k2_id=' + id
     url += '&max_records=100'
     url += '&verb=3'
-    url += '&outputformat=CSV'
+    url += '&outputformat=JSON'
 
 # retrieve results from MAST
 
     out = ''
-    lines = urllib.urlopen(url)
-    for line in lines:
-        line = line.strip()
-        if (len(line) > 0 and 
-            'Kepler' not in line and 
-            'integer' not in line and
-            'no rows found' not in line):
-            out = line.split(',')
-    if len(out) > 0:
-        for jj in [4,13,15,19,21,25,27,29,33,35,37]:
-            try:
-                out[jj] = float(out[jj])
-            except:
-                pass
-        data = {'EPIC':out[0],
-                'RA': out[1],
-                'Dec':out[2],
-                'Avail':out[3],
-                'Kp_mag':(out[4]),
-                'HIP':out[5],
-                'TYC':out[6],
-                'UCAC':out[7],
-                '2MASS':out[8],
-                'pmra':(out[13]),
-                'pmdec':(out[15]),
-                'Bmag':(out[19]),
-                'Vmag':(out[21]),
-                'gmag':(out[25]),
-                'rmag':(out[27]),
-                'imag':(out[29]),
-                'Jmag':(out[33]),
-                'Hmag':(out[35]),
-                'Kmag':(out[37])
-                }
-    else:
+    try:
+        lines = urllib.urlopen(url)
+        raw = lines.read()
+        data = json.loads(raw)[0]
+        # for line in lines:
+        #     line = line.strip()
+        #     if (len(line) > 0 and 
+        #         'Kepler' not in line and 
+        #         'integer' not in line and
+        #         'no rows found' not in line):
+        #         out = line.split(',')
+        # if len(out) > 0:
+        #     for jj in [4,13,15,19,21,25,27,29,33,35,37]:
+        #         try:
+        #             out[jj] = float(out[jj])
+        #         except:
+        #             pass
+        #     data = {'EPIC':out[0],
+        #             'RA': out[1],
+        #             'Dec':out[2],
+        #             'Avail':out[3],
+        #             'Kp_mag':(out[4]),
+        #             'HIP':out[5],
+        #             'TYC':out[6],
+        #             'UCAC':out[7],
+        #             '2MASS':out[8],
+        #             'pmra':(out[13]),
+        #             'pmdec':(out[15]),
+        #             'Bmag':(out[19]),
+        #             'Vmag':(out[21]),
+        #             'gmag':(out[25]),
+        #             'rmag':(out[27]),
+        #             'imag':(out[29]),
+        #             'Jmag':(out[33]),
+        #             'Hmag':(out[35]),
+        #             'Kmag':(out[37])
+        #             }
+
+    except:
         txt = 'ERROR -- no target found with KepID %s' % id
         sys.exit(txt)
 
