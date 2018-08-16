@@ -709,9 +709,7 @@ def mjd2bjd(times,ra,dec):
     https://mail.scipy.org/pipermail/astropy/2014-April/003148.html'''
     t = Time(times, format='mjd')
     eph = jplephem.Ephemeris(de423)
-    src_vec = coords.ICRS(ra=ra, dec=dec,
-            unit=(units.degree, units.degree),
-            distance=coords.Distance(1, units.km))
+    src_vec = SkyCoord(ra=ra*units.degree, dec=dec*units.degree,distance=1*units.km,frame='icrs')
     barycenter_earthmoon = eph.position('earthmoon', t.tdb.jd)
     moonvector = eph.position('moon', t.tdb.jd)
     pos_earth = (barycenter_earthmoon - moonvector * eph.earth_share)*units.km
