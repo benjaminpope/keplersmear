@@ -2,7 +2,8 @@ from numpy.distutils.core import setup, Extension
 from numpy.distutils.misc_util import Configuration
 import distutils.sysconfig as ds
 
-long_description = ''
+long_description = "This package generates light curves from collateral 'smear' data recorded by Kepler and K2. \
+This is useful for reconstructing light curves of stars that were otherwise not observed by the Kepler mission because they were too bright."
 
 setup(name='keplersmear',
       version='0.5',
