@@ -918,7 +918,7 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
     bjd = np.copy(smear['MJD'])
     bjd[np.isfinite(smear['MJD'])] = mjd2bjd(mjd,ra,dec)
     t0 = np.nanmin(bjd)
-
+    ncad = np.size(mjd)
     print 'Corrected MJD to BJD'
 
     if do_plot:
