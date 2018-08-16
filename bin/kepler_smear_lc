@@ -69,15 +69,15 @@ if __name__ == '__main__':
 	starttime = clock()
 	if not args.just_stitch:
 		for quarter in quarters:
-			# try:
-			lc = do_target(name,quarter,cat_file=cat_file,out_dir=out_dir,
-				cbvdir=cbvdir,smear_type=smear_type,do_plot=do_plot,
-				gap_file=gap_file,sig_clip=sig_clip)
-			lc.write('%s%s_smear_q%d%s.csv' % (out_dir,name,quarter,smear_name(smear_type)))
+			try:
+				lc = do_target(name,quarter,cat_file=cat_file,out_dir=out_dir,
+					cbvdir=cbvdir,smear_type=smear_type,do_plot=do_plot,
+					gap_file=gap_file,sig_clip=sig_clip)
+				lc.write('%s%s_smear_q%d%s.csv' % (out_dir,name,quarter,smear_name(smear_type)))
 
-			print 'Saved to %s%s_smear_q%d%s.csv' % (out_dir,name,quarter,smear_name(smear_type))
-			# except:
-			# 	print '\nFailed on Quarter %d' % quarter
+				print 'Saved to %s%s_smear_q%d%s.csv' % (out_dir,name,quarter,smear_name(smear_type))
+			except:
+				print '\nFailed on Quarter %d' % quarter
 
 			print_time(clock()-starttime)
 	
