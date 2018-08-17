@@ -1440,8 +1440,7 @@ def stitch_combine(out_dir,name,do_plot=True,thresh=2.5):
 
     lc_masked = Table.read('%s%s_smear_full%s.csv' % (out_dir,name,smear_name('smear_flux')))
     lc_virtual = Table.read('%s%s_smear_full%s.csv' % (out_dir,name,smear_name('vsmear_flux')))
-    # lc_tot = Table.read('%s%s_smear_full.csv' % (out_dir,name))
-    lc_tot = 
+    lc_tot = Table.read('%s%s_smear_full.csv' % (out_dir,name))
     print len(lc_masked),len(lc_virtual),len(lc_tot)
 
     lc_masked['SMEAR_TYPE'] = np.zeros_like(lc_masked['FLUX'])
