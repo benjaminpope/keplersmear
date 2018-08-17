@@ -1360,9 +1360,12 @@ def stitch_lcs(out_dir,name,smear_type,do_plot=True):
     background = np.array([])
 
     for j in range(18):
-        # try:
-        lcfile = '%s%s_smear_q%d%s.csv' % (out_dir,name,j,smear_name(smear_type))
-        lc = Table.read(lcfile)
+        try:
+            lcfile = '%s%s_smear_q%d%s.csv' % (out_dir,name,j,smear_name(smear_type))
+            lc = Table.read(lcfile)
+        except:
+            print "No quarter",j
+            continue
 
         thisflux = lc['FLUX']
         thisflux4 = lc['FLUX_CORR_4']
@@ -1371,13 +1374,14 @@ def stitch_lcs(out_dir,name,smear_type,do_plot=True):
         ncad = np.size(thesecads)
         f4s  = np.zeros((5,ncad))
         f8s = np.zeros((5,ncad))
+        print "Loaded Flux"
 
         for k in range(5): # do all the corrected fluxes
             f4s[k] = lc['FLUX%d_CORR_4' % k]
             f8s[k] = lc['FLUX%d_CORR_8' % k]
             f4s[k] /= medsig(f4s[k])[0]
             f8s[k] /= medsig(f8s[k])[0]
-
+        print "filtered"
         medflux = np.append(medflux,np.ones_like(thisflux)*medsig(thisflux)[0])
         thisflux /= medsig(thisflux)[0]
         thisflux4 /= medsig(thisflux4)[0]
@@ -1415,6 +1419,7 @@ def stitch_lcs(out_dir,name,smear_type,do_plot=True):
                    'BACKGROUND':background,
                    'MEDFLUX':medflux
                 })
+    print "saved"
 
     for j in range(5):
         newlc['FLUX%d_CORR_4' % j] = allf4s[j,:]
