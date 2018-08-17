@@ -1389,6 +1389,7 @@ def stitch_lcs(out_dir,name,smear_type,do_plot=True):
         thistime = lc['BJD']
         thissmooth = NIF(thisflux8,101,11)
         thisq = j*np.ones_like(thisflux)
+        print "filtered more"
 
         flux = np.concatenate((flux,thisflux))
         flux4 = np.concatenate((flux4,thisflux4))
@@ -1443,6 +1444,7 @@ def stitch_combine(out_dir,name,do_plot=True,thresh=2.5):
     lc_masked = Table.read('%s%s_smear_full%s.csv' % (out_dir,name,smear_name('smear_flux')))
     lc_virtual = Table.read('%s%s_smear_full%s.csv' % (out_dir,name,smear_name('vsmear_flux')))
     lc_tot = Table.read('%s%s_smear_full.csv' % (out_dir,name))
+    print len(lc_masked),len(lc_virtual),len(lc_tot)
 
     lc_masked['SMEAR_TYPE'] = np.zeros_like(lc_masked['FLUX'])
     lc_virtual['SMEAR_TYPE'] = np.ones_like(lc_virtual['FLUX'])
@@ -1450,7 +1452,7 @@ def stitch_combine(out_dir,name,do_plot=True,thresh=2.5):
     mask_sigs = []
     virtual_sigs = []
 
-    for q in range(17):
+    for q in range(18):
         m = lc_tot['QUARTER'] == q
 
         mmed, msig = medsig(lc_masked['FLUX_CORR_8'][m])
