@@ -1360,45 +1360,45 @@ def stitch_lcs(out_dir,name,smear_type,do_plot=True):
     background = np.array([])
 
     for j in range(18):
-        try:
-            lcfile = '%s%s_smear_q%d%s.csv' % (out_dir,name,j,smear_name(smear_type))
-            lc = Table.read(lcfile)
+        # try:
+        lcfile = '%s%s_smear_q%d%s.csv' % (out_dir,name,j,smear_name(smear_type))
+        lc = Table.read(lcfile)
 
-            thisflux = lc['FLUX']
-            thisflux4 = lc['FLUX_CORR_4']
-            thisflux8 = lc['FLUX_CORR_8']
-            thesecads = lc['CAD']
-            ncad = np.size(thesecads)
-            f4s  = np.zeros((5,ncad))
-            f8s = np.zeros((5,ncad))
+        thisflux = lc['FLUX']
+        thisflux4 = lc['FLUX_CORR_4']
+        thisflux8 = lc['FLUX_CORR_8']
+        thesecads = lc['CAD']
+        ncad = np.size(thesecads)
+        f4s  = np.zeros((5,ncad))
+        f8s = np.zeros((5,ncad))
 
-            for k in range(5): # do all the corrected fluxes
-                f4s[k] = lc['FLUX%d_CORR_4' % k]
-                f8s[k] = lc['FLUX%d_CORR_8' % k]
-                f4s[k] /= medsig(f4s[k])[0]
-                f8s[k] /= medsig(f8s[k])[0]
+        for k in range(5): # do all the corrected fluxes
+            f4s[k] = lc['FLUX%d_CORR_4' % k]
+            f8s[k] = lc['FLUX%d_CORR_8' % k]
+            f4s[k] /= medsig(f4s[k])[0]
+            f8s[k] /= medsig(f8s[k])[0]
 
-            medflux = np.append(medflux,np.ones_like(thisflux)*medsig(thisflux)[0])
-            thisflux /= medsig(thisflux)[0]
-            thisflux4 /= medsig(thisflux4)[0]
-            thisflux8 /= medsig(thisflux8)[0]
-            thistime = lc['BJD']
-            thissmooth = NIF(thisflux8,101,11)
-            thisq = j*np.ones_like(thisflux)
+        medflux = np.append(medflux,np.ones_like(thisflux)*medsig(thisflux)[0])
+        thisflux /= medsig(thisflux)[0]
+        thisflux4 /= medsig(thisflux4)[0]
+        thisflux8 /= medsig(thisflux8)[0]
+        thistime = lc['BJD']
+        thissmooth = NIF(thisflux8,101,11)
+        thisq = j*np.ones_like(thisflux)
 
-            flux = np.concatenate((flux,thisflux))
-            flux4 = np.concatenate((flux4,thisflux4))
-            flux8 = np.concatenate((flux8,thisflux8))
-            allf4s = np.concatenate((allf4s,f4s),axis=1)
-            allf8s = np.concatenate((allf8s,f8s),axis=1)
-            time = np.concatenate((time,thistime))
-            smooth = np.concatenate((smooth,thissmooth))
-            quarterlist = np.concatenate((quarterlist,thisq))
-            background = np.concatenate((background,lc['BACKGROUND']))
-            cadence = np.concatenate((cadence,thesecads))
-        except:
-            print 'Failed on Quarter',j
-            continue
+        flux = np.concatenate((flux,thisflux))
+        flux4 = np.concatenate((flux4,thisflux4))
+        flux8 = np.concatenate((flux8,thisflux8))
+        allf4s = np.concatenate((allf4s,f4s),axis=1)
+        allf8s = np.concatenate((allf8s,f8s),axis=1)
+        time = np.concatenate((time,thistime))
+        smooth = np.concatenate((smooth,thissmooth))
+        quarterlist = np.concatenate((quarterlist,thisq))
+        background = np.concatenate((background,lc['BACKGROUND']))
+        cadence = np.concatenate((cadence,thesecads))
+        # except:
+        #     print 'Failed on Quarter',j
+        #     continue
 
     # flux *= medsig(medflux)[0]
     # flux4 *= medsig(medflux)[0]
