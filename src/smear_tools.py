@@ -1043,7 +1043,7 @@ def do_target(name,quarter,cat_file='kepler_inputs.csv',out_dir = 'kepler_smear/
         plt.ylabel('FLUX')
         plt.title('')
         plt.savefig('%slc_bads_%s_q%d.png' % (out_dir,name,quarter))
-        print 'Saved corrected light curve to %slc_bads_%s_q%d.png' % (out_dir,name,quarter)
+        print 'Saved light curve to %slc_bads_%s_q%d.png' % (out_dir,name,quarter)
 
     lc = censoredlc.copy()
     # now do a jump correction
@@ -1366,44 +1366,41 @@ def stitch_lcs(out_dir,name,smear_type,do_plot=True):
         except:
             print "No quarter",j
             continue
+        try:
+            thisflux = lc['FLUX']
+            thisflux4 = lc['FLUX_CORR_4']
+            thisflux8 = lc['FLUX_CORR_8']
+            thesecads = lc['CAD']
+            ncad = np.size(thesecads)
+            f4s  = np.zeros((5,ncad))
+            f8s = np.zeros((5,ncad))
 
-        thisflux = lc['FLUX']
-        thisflux4 = lc['FLUX_CORR_4']
-        thisflux8 = lc['FLUX_CORR_8']
-        thesecads = lc['CAD']
-        ncad = np.size(thesecads)
-        f4s  = np.zeros((5,ncad))
-        f8s = np.zeros((5,ncad))
-        print "Loaded Flux"
+            for k in range(5): # do all the corrected fluxes
+                f4s[k] = lc['FLUX%d_CORR_4' % k]
+                f8s[k] = lc['FLUX%d_CORR_8' % k]
+                f4s[k] /= medsig(f4s[k])[0]
+                f8s[k] /= medsig(f8s[k])[0]
+            medflux = np.append(medflux,np.ones_like(thisflux)*medsig(thisflux)[0])
+            thisflux /= medsig(thisflux)[0]
+            thisflux4 /= medsig(thisflux4)[0]
+            thisflux8 /= medsig(thisflux8)[0]
+            thistime = lc['BJD']
+            thissmooth = NIF(thisflux8,101,11)
+            thisq = j*np.ones_like(thisflux)
 
-        for k in range(5): # do all the corrected fluxes
-            f4s[k] = lc['FLUX%d_CORR_4' % k]
-            f8s[k] = lc['FLUX%d_CORR_8' % k]
-            f4s[k] /= medsig(f4s[k])[0]
-            f8s[k] /= medsig(f8s[k])[0]
-        print "filtered"
-        medflux = np.append(medflux,np.ones_like(thisflux)*medsig(thisflux)[0])
-        thisflux /= medsig(thisflux)[0]
-        thisflux4 /= medsig(thisflux4)[0]
-        thisflux8 /= medsig(thisflux8)[0]
-        thistime = lc['BJD']
-        thissmooth = NIF(thisflux8,101,11)
-        thisq = j*np.ones_like(thisflux)
-        print "filtered more"
-
-        flux = np.concatenate((flux,thisflux))
-        flux4 = np.concatenate((flux4,thisflux4))
-        flux8 = np.concatenate((flux8,thisflux8))
-        allf4s = np.concatenate((allf4s,f4s),axis=1)
-        allf8s = np.concatenate((allf8s,f8s),axis=1)
-        time = np.concatenate((time,thistime))
-        smooth = np.concatenate((smooth,thissmooth))
-        quarterlist = np.concatenate((quarterlist,thisq))
-        background = np.concatenate((background,lc['BACKGROUND']))
-        cadence = np.concatenate((cadence,thesecads))
-        # except:
-        #     print 'Failed on Quarter',j
-        #     continue
+            flux = np.concatenate((flux,thisflux))
+            flux4 = np.concatenate((flux4,thisflux4))
+            flux8 = np.concatenate((flux8,thisflux8))
+            allf4s = np.concatenate((allf4s,f4s),axis=1)
+            allf8s = np.concatenate((allf8s,f8s),axis=1)
+            time = np.concatenate((time,thistime))
+            smooth = np.concatenate((smooth,thissmooth))
+            quarterlist = np.concatenate((quarterlist,thisq))
+            background = np.concatenate((background,lc['BACKGROUND']))
+            cadence = np.concatenate((cadence,thesecads))
+        except:
+            print 'Failed on Quarter',j
+            continue
 
     # flux *= medsig(medflux)[0]
     # flux4 *= medsig(medflux)[0]
@@ -1443,7 +1440,8 @@ def stitch_combine(out_dir,name,do_plot=True,thresh=2.5):
 
     lc_masked = Table.read('%s%s_smear_full%s.csv' % (out_dir,name,smear_name('smear_flux')))
     lc_virtual = Table.read('%s%s_smear_full%s.csv' % (out_dir,name,smear_name('vsmear_flux')))
-    lc_tot = Table.read('%s%s_smear_full.csv' % (out_dir,name))
+    # lc_tot = Table.read('%s%s_smear_full.csv' % (out_dir,name))
+    lc_tot = 
     print len(lc_masked),len(lc_virtual),len(lc_tot)
 
     lc_masked['SMEAR_TYPE'] = np.zeros_like(lc_masked['FLUX'])
