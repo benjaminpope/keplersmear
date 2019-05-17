@@ -2,6 +2,7 @@
 
 [![Licence](http://img.shields.io/badge/license-GPLv3-blue.svg?style=flat)](http://www.gnu.org/licenses/gpl-3.0.html)
 [![arXiv](http://img.shields.io/badge/arXiv-1510.00008-blue.svg?style=flat)](http://arxiv.org/abs/1510.00008)
+[![DOI](https://zenodo.org/badge/64273812.svg)](https://zenodo.org/badge/latestdoi/64273812)
 
 Python package for generating light curves from Kepler and K2 collateral data. 
 
