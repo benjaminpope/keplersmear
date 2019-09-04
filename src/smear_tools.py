@@ -648,8 +648,8 @@ def get_smear_file_k2(campaign,mod,out,ddir='/kepler/kepler2/K2/'):
     if campaign == 10:
         fname = '%sC%02d/collateral/ktwo%02d%1d-c102_coll.fits' % (ddir,int(campaign),mod,out)
     else:
-        fname = '%sC%02d/collateral/ktwo%02d%1d-c%02d_coll.fits' % (ddir,int(campaign),mod,out,int(campaign))
-
+        fname = '%sC%02d/collateral/ktwo%02d%1d-c%02d_coll.fits' % (ddir,int(campaign),mod,out,int(campaign)) 
+    print fname
 
     return fname 
 
