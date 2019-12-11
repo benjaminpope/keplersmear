@@ -635,7 +635,7 @@ def get_pixel_mast(ra,dec,season):
 ###----------------------------------------------
 ###----------------------------------------------
 
-def get_smear_file(quarter,mod,out,ddir='/kepler/kepler/smear/'):
+def get_smear_file(quarter,mod,out,ddir='/mnt/users/kepler/smear/'):
     cads = get_num(quarter)
     fname = '%skplr%02d%1d-%d_coll.fits.gz' % (ddir,mod,out,cads)
 
@@ -644,7 +644,7 @@ def get_smear_file(quarter,mod,out,ddir='/kepler/kepler/smear/'):
 ###----------------------------------------------
 ###----------------------------------------------
 
-def get_smear_file_k2(campaign,mod,out,ddir='/kepler/kepler2/K2/'):
+def get_smear_file_k2(campaign,mod,out,ddir='/mnt/users/kepler/kepler2/K2/'):
     if campaign == 10:
         fname = '%sC%02d/collateral/ktwo%02d%1d-c102_coll.fits' % (ddir,int(campaign),mod,out)
     else:
